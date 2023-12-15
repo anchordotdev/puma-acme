@@ -9,11 +9,6 @@ module Puma
     # certificate.
     class Acme
       Puma::Plugins.register('acme', self)
-
-      def initialize(loader)
-        # This is a Puma::PluginLoader
-        @loader = loader
-      end
     end
   end
 end

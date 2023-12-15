@@ -21,6 +21,10 @@ Gem::Specification.new do |s|
   s.files           += ['LICENSE.txt', 'README.md', 'CHANGELOG.md', 'Gemfile', 'Gemfile.lock', 'Rakefile']
   s.extra_rdoc_files = ['LICENSE.txt', 'README.md', 'CHANGELOG.md']
 
+  s.add_runtime_dependency 'acme-client', '~> 2.0.13'
+  s.add_runtime_dependency 'pstore', '~> 0.1'
+
   s.add_development_dependency 'minitest', '~> 5.14'
   s.add_development_dependency 'rake', '~> 13.0'
+  s.add_development_dependency 'http.rb', '~> 0.12'
 end

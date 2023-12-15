@@ -2,14 +2,22 @@
 
 require_relative './test_helper'
 
-class ConfigurationTest < Minitest::Test
-  def test_minimal_config
-    port = unused_port
+class IntegrationTest < Minitest::Test
+  def test_certificate_provisioning
+    byebug
+
+    if (missing_vars = %w[ACME_SERVER_NAME].select { |var| ENV[var].nil? }).any?
+      skip "missing required env var for integration test: #{missing_vars * ', '}"
+    end
+
+    port, ssl_port = unused_port
 
     configuration = Puma::Configuration.new do |config|
       config.plugin :acme
 
       config.bind "tcp://127.0.0.1:#{port}"
+      config.bind "ssl://127.0.0.1:#{ssl_port}"
+
       config.app { [200, {}, ['hello world']] }
     end
 

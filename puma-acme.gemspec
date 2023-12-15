@@ -23,6 +23,7 @@ Gem::Specification.new do |s|
 
   s.add_runtime_dependency 'acme-client', '~> 2.0.13'
   s.add_runtime_dependency 'pstore', '~> 0.1'
+  s.add_runtime_dependency 'puma', '~> 6.4'
 
   s.add_development_dependency 'minitest', '~> 5.14'
   s.add_development_dependency 'rake', '~> 13.0'

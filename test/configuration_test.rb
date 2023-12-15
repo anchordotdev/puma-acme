@@ -9,6 +9,8 @@ class ConfigurationTest < Minitest::Test
     configuration = Puma::Configuration.new do |config|
       config.plugin :acme
 
+      config.acme_server_name 'acme.example.test'
+
       config.bind "tcp://127.0.0.1:#{port}"
       config.app { [200, {}, ['hello world']] }
     end

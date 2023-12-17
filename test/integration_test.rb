@@ -15,6 +15,7 @@ class IntegrationTest < Minitest::Test
       config.plugin :acme
 
       config.acme_server_name ENV.fetch('ACME_SERVER_NAME')
+      config.acme_tos_agreed  true
 
       config.bind "tcp://127.0.0.1:#{port}"
       # config.bind "ssl+acme://127.0.0.1:#{ssl_port}"
@@ -23,7 +24,7 @@ class IntegrationTest < Minitest::Test
     end
 
     run_server(port, configuration) do
-      response = HTTP.get("http://127.0.0.1:#{port}/")
+      response = HTTP.get("http://127.0.0.1:#{port}/.well-known/acme-challenge/foo-bar")
 
       assert_equal response.body.to_s, 'hello world'
     end

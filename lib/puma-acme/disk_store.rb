@@ -25,7 +25,7 @@ module Puma
 
       def read(key, _options = nil)
         @pstore.transaction(true) do
-          data = @pstore[key]
+          @pstore[key]
         end
       end
 

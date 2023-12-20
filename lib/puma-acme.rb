@@ -182,13 +182,13 @@ module Puma
         loop do
           sleep renew_interval
 
-          if cert.renewable?(renew_at)
-            @log_writer.debug 'Acme: creating renewal order'
+          next unless cert.renewable?(renew_at)
 
-            @manager.order!(cert)
+          @log_writer.debug 'Acme: creating renewal order'
 
-            return provision(cert, poll_interval:)
-          end
+          @manager.order!(cert)
+
+          return provision(cert, poll_interval:)
         end
       rescue StaleCert
         sleep poll_interval

@@ -7,10 +7,9 @@ module Puma
     CHALLENGE_TYPE = ::Acme::Client::Resources::Challenges::HTTP01::CHALLENGE_TYPE
 
     class Manager
-
       attr_reader :contact, :directory, :tos_agreed, :eab
 
-      def initialize(store:, contact: nil, directory:, tos_agreed:, eab:)
+      def initialize(store:, directory:, tos_agreed:, eab:, contact: nil)
         @store = store
         @contact = contact
         @directory = directory
@@ -31,9 +30,7 @@ module Puma
       end
 
       def order!(cert)
-        if @store.read(cert.key) != cert
-          raise StaleCert
-        end
+        raise StaleCert if @store.read(cert.key) != cert
 
         identifiers = cert.identifiers.map(&:value)
         acme_order = client.new_order(**cert.to_h.slice(:not_before, :not_after).merge(identifiers:))
@@ -54,14 +51,11 @@ module Puma
       def validate!(challenge)
         @store.write(challenge.answer.key, challenge.answer)
 
-        acme_challenge = client.request_challenge_validation(url: challenge.url)
-        acme_challenge
+        client.request_challenge_validation(url: challenge.url)
       end
 
       def finalize!(cert)
-        if @store.read(cert.key) != cert
-          raise StaleCert
-        end
+        raise StaleCert if @store.read(cert.key) != cert
 
         identifiers = cert.identifiers.map(&:value)
         common_name = identifiers.first
@@ -70,18 +64,16 @@ module Puma
         csr = ::Acme::Client::CertificateRequest.new(private_key:, subject: { common_name: })
 
         acme_order = client.order(url: cert.order.url)
-        if acme_order.finalize(csr:)
-          cert.order = Order.from(acme_order)
-          cert.key_pem = private_key.to_pem
+        return unless acme_order.finalize(csr:)
 
-          @store.write(cert.key, cert)
-        end
+        cert.order = Order.from(acme_order)
+        cert.key_pem = private_key.to_pem
+
+        @store.write(cert.key, cert)
       end
 
       def download!(cert)
-        if @store.read(cert.key) != cert
-          raise StaleCert
-        end
+        raise StaleCert if @store.read(cert.key) != cert
 
         acme_order = client.order(url: cert.order.url)
 
@@ -91,9 +83,7 @@ module Puma
       end
 
       def reload!(cert)
-        if @store.read(cert.key) != cert
-          raise StaleCert
-        end
+        raise StaleCert if @store.read(cert.key) != cert
 
         acme_order = client.order(url: cert.order.url)
         cert.order = Order.from(acme_order)
@@ -113,7 +103,7 @@ module Puma
         ::Acme::Client.new(
           kid: account.kid,
           private_key: load_key(account.jwk, account.key_pem),
-          directory:,
+          directory:
         )
       end
 
@@ -122,21 +112,23 @@ module Puma
 
         client = ::Acme::Client.new(
           private_key:,
-          directory:,
+          directory:
         )
 
         acme_account = client.new_account(
           contact:,
           terms_of_service_agreed: tos_agreed,
-          external_account_binding: eab&.to_h,
+          external_account_binding: eab&.to_h
         )
 
-        Account.new(acme_account.to_h.slice(:url, :status, :contact).merge({
+        account_parts = {
           jwk: client.jwk.to_h,
           kid: client.kid,
           key_pem: private_key.to_pem,
-          tos_agreed:,
-        }))
+          tos_agreed:
+        }
+
+        Account.new(acme_account.to_h.slice(:url, :status, :contact).merge(account_parts))
       end
 
       def new_key(algorithm)
@@ -149,8 +141,8 @@ module Puma
 
       def load_key(jwk, data)
         case jwk.slice(:kty, :crv)
-        when {kty: 'RSA'}              then OpenSSL::PKey::RSA.new(data)
-        when {kty: 'EC', crv: 'P-256'} then OpenSSL::PKey::EC.new(data)
+        when { kty: 'RSA' }              then OpenSSL::PKey::RSA.new(data)
+        when { kty: 'EC', crv: 'P-256' } then OpenSSL::PKey::EC.new(data)
         else raise UnknownAlgorithmError, "unknown key algorithm '#{jwk[:kty]}'"
         end
       end

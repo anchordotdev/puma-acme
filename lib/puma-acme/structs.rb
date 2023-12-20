@@ -2,8 +2,8 @@
 
 module Puma
   module Acme
-
-    Account = Struct.new(:directory, :url, :status, :contact, :tos_agreed, :eab, :jwk, :kid, :key_pem, keyword_init: true) do
+    Account = Struct.new(:directory, :url, :status, :contact, :tos_agreed, :eab, :jwk, :kid, :key_pem,
+                         keyword_init: true) do
       def self.key(directory:, contact: nil, eab: nil)
         new(directory:, contact:, eab:).key
       end
@@ -22,7 +22,7 @@ module Puma
         new(
           type: acme_challenge.challenge_type,
           token: acme_challenge.token,
-          value: acme_challenge.key_authorization,
+          value: acme_challenge.key_authorization
         )
       end
 
@@ -40,8 +40,8 @@ module Puma
       def self.from(acme_authz)
         identifier = Identifier.from(acme_authz.identifier)
         challenges = acme_authz.challenges
-          .reject {|c| c.is_a?(::Acme::Client::Resources::Challenges::Unsupported) }
-          .map {|c| Challenge.from(c) }
+                               .reject { |c| c.is_a?(::Acme::Client::Resources::Challenges::Unsupported) }
+                               .map { |c| Challenge.from(c) }
 
         new(acme_authz.to_h.slice(*members).merge(challenges:, identifier:))
       end
@@ -89,7 +89,8 @@ module Puma
     # https://datatracker.ietf.org/doc/html/rfc8555#section-8
     Challenge = Struct.new(:url, :type, :token, :error, :answer, keyword_init: true) do
       def self.from(acme_challenge)
-        new(acme_challenge.to_h.slice(*members).merge(type: acme_challenge.challenge_type, answer: Answer.from(acme_challenge)))
+        new(acme_challenge.to_h.slice(*members).merge(type: acme_challenge.challenge_type,
+                                                      answer: Answer.from(acme_challenge)))
       end
     end
 
@@ -111,10 +112,11 @@ module Puma
     end
 
     # https://datatracker.ietf.org/doc/html/rfc8555#section-7.1.3
-    Order = Struct.new(:url, :status, :expires, :identifiers, :not_before, :not_after, :error, :authorizations, keyword_init: true) do
+    Order = Struct.new(:url, :status, :expires, :identifiers, :not_before, :not_after, :error, :authorizations,
+                       keyword_init: true) do
       def self.from(acme_order)
-        identifiers = acme_order.identifiers.map {|i| Identifier.new(i) }
-        authorizations = acme_order.authorizations.map {|a| Authz.from(a) }
+        identifiers = acme_order.identifiers.map { |i| Identifier.new(i) }
+        authorizations = acme_order.authorizations.map { |a| Authz.from(a) }
 
         new(acme_order.to_h.slice(*members).merge(identifiers:, authorizations:))
       end

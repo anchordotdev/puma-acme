@@ -5,7 +5,6 @@ require 'sinatra'
 module Puma
   module Acme
     class Middleware < Sinatra::Base
-
       def initialize(app, manager:)
         @app = app
         @manager = manager

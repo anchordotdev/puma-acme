@@ -11,20 +11,22 @@ module Puma
 
       CHALLENGE_TYPE = ::Acme::Client::Resources::Challenges::HTTP01::CHALLENGE_TYPE
 
-      attr_reader :contact, :directory, :tos_agreed
+      attr_reader :contact, :directory, :tos_agreed, :eab
 
-      def initialize(store:, contact: nil, directory:, on_finished: nil, tos_agreed:)
+      def initialize(store:, contact: nil, directory:, tos_agreed:, eab:)
         @store = store
         @contact = contact
         @directory = directory
-        @on_finished = on_finished
         @tos_agreed = [true, directory].include?(tos_agreed)
+        @eab = eab
+      end
 
-        @client = acme_client
+      def account?
+        @store.read(Account.key(directory:, contact:, eab:))
       end
 
       def account
-        @store.fetch(Account.key(directory:, contact:)) { create_account }
+        @store.fetch(Account.key(directory:, contact:, eab:)) { create_account }
       end
 
       def cert(algorithm:, identifiers:)
@@ -41,7 +43,7 @@ module Puma
         end
 
         identifiers = cert.identifiers.map(&:value)
-        acme_order = @client.new_order(**cert.to_h.slice(:not_before, :not_after).merge(identifiers:))
+        acme_order = client.new_order(**cert.to_h.slice(:not_before, :not_after).merge(identifiers:))
         cert.order = Order.from(acme_order)
 
         # TODO: maybe move this to caller
@@ -59,7 +61,7 @@ module Puma
       def validate!(challenge)
         @store.write(challenge.answer.key, challenge.answer)
 
-        acme_challenge = @client.request_challenge_validation(url: challenge.url)
+        acme_challenge = client.request_challenge_validation(url: challenge.url)
         acme_challenge
       end
 
@@ -74,7 +76,7 @@ module Puma
 
         csr = ::Acme::Client::CertificateRequest.new(private_key:, subject: { common_name: })
 
-        acme_order = @client.order(url: cert.order.url)
+        acme_order = client.order(url: cert.order.url)
         if acme_order.finalize(csr:)
           cert.order = Order.from(acme_order)
           cert.key_pem = private_key.to_pem
@@ -88,7 +90,7 @@ module Puma
           raise StaleCert
         end
 
-        acme_order = @client.order(url: cert.order.url)
+        acme_order = client.order(url: cert.order.url)
 
         cert.cert_pem = acme_order.certificate
 
@@ -100,13 +102,17 @@ module Puma
           raise StaleCert
         end
 
-        acme_order = @client.order(url: cert.order.url)
+        acme_order = client.order(url: cert.order.url)
         cert.order = Order.from(acme_order)
 
         @store.write(cert.key, cert)
       end
 
       protected
+
+      def client
+        @client ||= acme_client
+      end
 
       def acme_client
         account = self.account
@@ -129,7 +135,7 @@ module Puma
         acme_account = client.new_account(
           contact:,
           terms_of_service_agreed: tos_agreed,
-          # external_account_binding:
+          external_account_binding: eab&.to_h,
         )
 
         Account.new(acme_account.to_h.slice(:url, :status, :contact).merge({

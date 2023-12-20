@@ -28,6 +28,10 @@ module Puma
         directory  = launcher.options.fetch(:acme_directory, DEFAULT_DIRECTORY)
         tos_agreed = launcher.options.fetch(:acme_tos_agreed, false)
 
+        if eab_kid = launcher.options[:acme_eab_kid]
+          eab = Eab.new(kid: eab_kid, hmac_key: launcher.options.fetch(:acme_eab_hmac_key))
+        end
+
         store = launcher.options[:acme_cache] || disk_store(launcher.options)
 
         poll_interval = launcher.options.fetch(:acme_poll_interval, 1)
@@ -37,6 +41,7 @@ module Puma
           contact:,
           directory:,
           tos_agreed:,
+          eab:,
         )
 
         if @acme_binds.nil?
@@ -97,6 +102,12 @@ module Puma
       end
 
       def provision(launcher, cert, poll_interval:)
+        unless @manager.account?
+          launcher.log_writer.debug "Acme: creating account"
+
+          @manager.account
+        end
+
         if cert.order.nil?
           launcher.log_writer.debug "Acme: creating order"
           @manager.order!(cert)

@@ -34,19 +34,33 @@ module Minitest
       yield(events)
     ensure
       launcher&.stop
+
+      ensure_closed(port)
     end
 
     def unused_port(host: '127.0.0.1')
       TCPServer.open(host, 0) { |server| server.connect_address.ip_port }
     end
 
-    def wait_for(port, host: '127.0.0.1', timeout: 15)
+    def wait_for(port, host: '127.0.0.1', timeout: 500)
       kaboom_at = Time.now.to_i + timeout
 
       loop do
         return TCPSocket.new(host, port, connect_timeout: timeout).close
       rescue Errno::ECONNREFUSED, Errno::EHOSTUNREACH, Errno::EINVAL, SocketError
         raise if Time.now.to_i > kaboom_at
+      end
+    end
+
+    def ensure_closed(port, host: '127.0.0.1', timeout: 15)
+      kaboom_at = Time.now.to_i + timeout
+
+      loop do
+        TCPSocket.new(host, port, connect_timeout: timeout).close
+
+        raise StandardError, 'timeout' if Time.now.to_i > kaboom_at
+      rescue Errno::ECONNREFUSED, Errno::EHOSTUNREACH, Errno::EINVAL, SocketError
+        return
       end
     end
   end

@@ -76,7 +76,11 @@ module Puma
       end
     end
 
-    Eab = Struct.new(:kid, :hmac_key)
+    Eab = Struct.new(:kid, :hmac_key, keyword_init: true) do
+      def key
+        [:eab, kid]
+      end
+    end
 
     Identifier = Struct.new(:type, :value, keyword_init: true) do
       def self.parse(value)

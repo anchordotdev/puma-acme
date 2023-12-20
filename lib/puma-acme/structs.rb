@@ -62,10 +62,27 @@ module Puma
         [:cert, algorithm, identifiers]
       end
 
-      def provisioned?
-        # TODO: check expiration
+      def usable?(now: Time.now.utc)
+        !cert_pem.nil? && !key_pem.nil? && x509.not_after > now
+      end
 
-        !cert_pem.nil? && !key_pem.nil?
+      def renewable?(renew_in, now: Time.now.utc)
+        case renew_in
+        when Float
+          renew_at = x509.not_before + (x509.not_after - x509.not_before) * renew_in
+        when Integer
+          renew_at = x509.not_before + renew_in
+        else
+          raise UnknownRenewIn, renew_in
+        end
+
+        now >= renew_at
+      end
+
+      protected
+
+      def x509
+        @x509 ||= OpenSSL::X509::Certificate.new(cert_pem) if cert_pem
       end
     end
 

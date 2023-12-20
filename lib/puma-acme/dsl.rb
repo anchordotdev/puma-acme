@@ -28,9 +28,14 @@ module Puma
       @options[:acme_mode]
     end
 
-    def acme_renew_in(duration = nil)
-      @options[:acme_renew_in] = duration if duration
-      @options[:acme_renew_in]
+    def acme_renew_at(duration = nil)
+      @options[:acme_renew_at] = duration if duration
+      @options[:acme_renew_at]
+    end
+
+    def acme_renew_interval(duration = nil)
+      @options[:acme_renew_interval] = duration if duration
+      @options[:acme_renew_interval]
     end
 
     def acme_server_name(name)

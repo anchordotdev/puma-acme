@@ -122,4 +122,55 @@ class IntegrationTest < Minitest::Test
       assert_equal response.body.to_s, 'hello world'
     end
   end
+
+  def test_default_renewal
+    if (missing_vars = %w[ACME_SERVER_NAME ACME_HTTP_PORT ACME_HTTPS_PORT].select { |var| ENV[var].nil? }).any?
+      skip "missing required env var for integration test: #{missing_vars * ', '}"
+    end
+
+    server_name = "default.#{ENV.fetch('ACME_SERVER_NAME')}"
+    http_port = ENV.fetch('ACME_HTTP_PORT')
+    https_port = ENV.fetch('ACME_HTTPS_PORT')
+
+    configuration = Puma::Configuration.new do |config|
+      config.plugin :acme
+
+      config.acme_server_name server_name
+      config.acme_tos_agreed  true
+
+      config.acme_renew_at       0.000001
+      config.acme_renew_interval 5
+
+      config.bind("tcp://0.0.0.0:#{http_port}")
+      config.bind("acme://0.0.0.0:#{https_port}")
+
+      config.app { [200, {}, ['hello world']] }
+    end
+
+    run_server(http_port, configuration) do |events|
+      response = HTTP.get("http://#{server_name}/")
+
+      assert_equal response.body.to_s, 'hello world'
+
+      loop do
+        response = HTTP.get("https://#{server_name}/")
+
+        assert_equal response.body.to_s, 'hello world'
+
+        events.on_restart do
+          response = HTTP.get("https://#{server_name}/")
+
+          assert_equal response.body.to_s, 'hello world'
+
+          # TODO: assert the cert has changed
+
+          return
+        rescue HTTP::ConnectionError
+          sleep 1
+        end
+      rescue HTTP::ConnectionError
+        sleep 1
+      end
+    end
+  end
 end

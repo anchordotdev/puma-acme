@@ -18,7 +18,7 @@ module Puma
           return @app.call(env)
         end
 
-        if (answer = @manager.answer(type: Manager::CHALLENGE_TYPE, token:)).nil?
+        if (answer = @manager.answer(type: CHALLENGE_TYPE, token:)).nil?
           return @app.call(env)
         end
 

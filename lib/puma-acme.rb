@@ -13,14 +13,11 @@ module Puma
     class UnknownAlgorithmError < Error; end
     class UnknownMode < Error; end
 
+    DEFAULT_DIRECTORY = 'https://acme-v02.api.letsencrypt.org/directory'
+    DEFAULT_RENEW_INTERVAL = 60 * 60
 
     class Plugin < Puma::Plugin
       Plugins.register('acme', self)
-
-      SSL_ACME_SCHEME = 'ssl+acme:'
-
-      DEFAULT_DIRECTORY = 'https://acme-v02.api.letsencrypt.org/directory'
-      DEFAULT_SSL_ACME_BIND = "#{SSL_ACME_SCHEME}//0.0.0.0:4433"
 
       def start(launcher)
         identifiers = launcher.options[:acme_server_names] || raise(Error, 'missing ACME server name(s)')
@@ -30,58 +27,74 @@ module Puma
         directory  = launcher.options.fetch(:acme_directory, DEFAULT_DIRECTORY)
         tos_agreed = launcher.options.fetch(:acme_tos_agreed, false)
 
-        if eab_kid = launcher.options[:acme_eab_kid]
+        if (eab_kid = launcher.options[:acme_eab_kid])
           eab = Eab.new(kid: eab_kid, hmac_key: launcher.options.fetch(:acme_eab_hmac_key))
         end
 
         store = launcher.options[:acme_cache] || disk_store(launcher.options)
 
-        poll_interval = launcher.options.fetch(:acme_poll_interval, 1)
-        mode          = launcher.options.fetch(:acme_mode, :background)
+        mode           = launcher.options.fetch(:acme_mode, :background)
+        poll_interval  = launcher.options.fetch(:acme_poll_interval, 1)
+        renew_at       = launcher.options.fetch(:acme_renew_at, nil)
+        renew_interval = launcher.options.fetch(:acme_renew_interval, DEFAULT_RENEW_INTERVAL)
 
-        @manager ||= Manager.new(
+        @manager = Manager.new(
           store:,
           contact:,
           directory:,
           tos_agreed:,
-          eab:,
+          eab:
         )
 
-        if @acme_binds.nil?
-          @acme_binds, binds = launcher.options[:binds].partition { |bind| bind.start_with?('acme://') }
-          launcher.options[:binds] = binds
-        end
+        @acme_binds, binds = launcher.options[:binds].partition { |bind| bind.start_with?('acme://') }
+        launcher.options[:binds] = binds
 
         launcher.options[:app] = Middleware.new(
           launcher.options[:app],
-          manager: @manager,
+          manager: @manager
         )
 
+        @log_writer = launcher.log_writer
+
         cert = @manager.cert(identifiers:, algorithm:)
-        if cert.provisioned?
-          launcher.log_writer.debug "Acme: cert already provisioned"
+        if cert.usable?
+          @log_writer.debug 'Acme: cert already provisioned'
 
           bind_to(launcher, cert)
+
+          if renew_at
+            in_background do
+              renew(cert, renew_at:, renew_interval:, poll_interval:)
+
+              launcher.restart
+            end
+          end
         elsif mode == :background
-          launcher.log_writer.debug "Acme: background provisioning cert"
+          @log_writer.debug 'Acme: background provisioning cert'
 
           in_background do
-            provision(cert, poll_interval:, log_writer: launcher.log_writer)
+            provision(cert, poll_interval:)
 
-            launcher.log_writer.debug "Acme: restarting puma server"
+            @log_writer.debug 'Acme: restarting puma server'
 
             launcher.restart
           end
         elsif mode == :foreground
-          launcher.log_writer.debug "Acme: provisioning cert"
+          @log_writer.debug 'Acme: provisioning cert'
 
-          provision(cert, poll_interval:, log_writer: launcher.log_writer)
+          provision(cert, poll_interval:)
           bind_to(launcher, cert)
+
+          if renew_at
+            in_background do
+              renew(cert, renew_at:, renew_interval:, poll_interval:)
+
+              launcher.restart
+            end
+          end
         else
           raise UnknownMode, mode
         end
-
-        # in_background { renew(launcher, identifiers:, algorithm:) }
       end
 
       protected
@@ -89,29 +102,27 @@ module Puma
       def bind_to(launcher, cert)
         params = {
           'key_pem' => cert.key_pem,
-          'cert_pem' => cert.cert_pem,
+          'cert_pem' => cert.cert_pem
         }
 
-        ctx = MiniSSL::ContextBuilder.new(params, launcher.log_writer).context
-
-        new_servers = {}
+        ctx = MiniSSL::ContextBuilder.new(params, @log_writer).context
 
         launcher.binder.before_parse_hook do
           @acme_binds.each do |str|
             uri = URI.parse(str)
 
-            if fd = launcher.binder.inherited_fds.delete(str)
+            if (fd = launcher.binder.inherited_fds.delete(str))
               io = launcher.binder.inherit_ssl_listener(fd, ctx)
-              launcher.log_writer.log "* Inherited #{str}"
-            elsif fd = launcher.binder.activated_sockets.delete([ :acme, uri.host, uri.port ])
+              @log_writer.log "* Inherited #{str}"
+            elsif (fd = launcher.binder.activated_sockets.delete([:acme, uri.host, uri.port]))
               io = launcher.binder.inherit_ssl_listener(fd, ctx)
-              launcher.log_writer.log "* Activated #{str}"
+              @log_writer.log "* Activated #{str}"
             else
               io = launcher.binder.add_ssl_listener(uri.host, uri.port, ctx)
             end
 
             cert.identifiers.each do |identifier|
-              launcher.log_writer.log "* Listening on ssl://#{identifier.value}:#{uri.port}"
+              @log_writer.log "* Listening on ssl://#{identifier.value}:#{uri.port}"
             end
 
             launcher.binder.listeners << [str, io]
@@ -119,15 +130,15 @@ module Puma
         end
       end
 
-      def provision(cert, poll_interval:, log_writer: nil)
+      def provision(cert, poll_interval:)
         unless @manager.account(create: false)
-          log_writer&.debug "Acme: creating account"
+          @log_writer.debug 'Acme: creating account'
 
           @manager.account
         end
 
         if cert.order.nil?
-          log_writer&.debug "Acme: creating order"
+          @log_writer.debug 'Acme: creating order'
           @manager.order!(cert)
         else
           @manager.reload!(cert)
@@ -136,23 +147,23 @@ module Puma
         loop do
           case cert.order.status.to_sym
           when :valid
-            log_writer&.debug "Acme: downloading cert"
+            @log_writer.debug 'Acme: downloading cert'
 
             @manager.download!(cert)
 
             return
           when :processing, :pending
-            log_writer&.debug "Acme: waiting on #{cert.order.status} order"
+            @log_writer.debug "Acme: waiting on #{cert.order.status} order"
 
             sleep poll_interval
 
             @manager.reload!(cert)
           when :ready
-            log_writer&.debug "Acme: finalizing ready order"
+            @log_writer.debug 'Acme: finalizing ready order'
 
             @manager.finalize!(cert)
           when :invalid
-            log_writer&.debug "Acme: invalid order, re-ordering"
+            @log_writer.debug 'Acme: invalid order, re-ordering'
 
             @manager.order!(cert)
           end
@@ -162,8 +173,30 @@ module Puma
         retry
       end
 
+      def renew(cert, renew_at:, renew_interval:, poll_interval:)
+        if cert.order.status.to_sym != :valid
+          # finish provisioning aborted renewal
+          return provision(cert, poll_interval:)
+        end
+
+        loop do
+          sleep renew_interval
+
+          if cert.renewable?(renew_at)
+            @log_writer.debug 'Acme: creating renewal order'
+
+            @manager.order!(cert)
+
+            return provision(cert, poll_interval:)
+          end
+        end
+      rescue StaleCert
+        sleep poll_interval
+        retry
+      end
+
       def disk_store(options)
-        cache_dir = options[:cache_dir] || 'tmp/acme'
+        cache_dir = options[:acme_cache_dir] || 'tmp/acme'
 
         FileUtils.mkdir_p(cache_dir)
 

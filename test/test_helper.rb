@@ -59,7 +59,7 @@ module Minitest
         TCPSocket.new(host, port, connect_timeout: timeout).close
 
         raise StandardError, 'timeout' if Time.now.to_i > kaboom_at
-      rescue Errno::ECONNREFUSED, Errno::EHOSTUNREACH, Errno::EINVAL, SocketError
+      rescue Errno::ECONNREFUSED, Errno::EHOSTUNREACH, Errno::EINVAL, Errno::ECONNRESET, SocketError
         return
       end
     end

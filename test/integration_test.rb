@@ -87,4 +87,39 @@ class IntegrationTest < Minitest::Test
       end
     end
   end
+
+  def test_foreground_provisioning
+    if (missing_vars = %w[ACME_ZC_DIRECTORY ACME_ZC_SERVER_NAME].select { |var| ENV[var].nil? }).any?
+      skip "missing required env var for integration test: #{missing_vars * ', '}"
+    end
+
+    server_name = ENV.fetch('ACME_ZC_SERVER_NAME')
+    https_port = ENV.fetch('ACME_ZC_HTTPS_PORT', unused_port)
+
+    directory = ENV.fetch('ACME_ZC_DIRECTORY')
+    eab_kid = ENV.fetch('ACME_ZC_EAB_KID', nil)
+    eab_hmac_key = ENV.fetch('ACME_ZC_EAB_HMAC_KEY', nil)
+
+    configuration = Puma::Configuration.new do |config|
+      config.plugin :acme
+
+      config.acme_directory    directory
+      config.acme_eab_kid      eab_kid      unless eab_kid.nil?
+      config.acme_eab_hmac_key eab_hmac_key unless eab_hmac_key.nil?
+
+      config.acme_server_name server_name
+      config.acme_mode :foreground
+
+      config.bind("acme://0.0.0.0:#{https_port}")
+
+      config.app { [200, {}, ['hello world']] }
+    end
+
+
+    run_server(https_port, configuration) do |events|
+      response = HTTP.get("https://#{server_name}:#{https_port}/")
+
+      assert_equal response.body.to_s, 'hello world'
+    end
+  end
 end

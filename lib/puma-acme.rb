@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'byebug'
-
 require 'fileutils'
 require 'puma'
 require 'puma/plugin'
@@ -11,6 +9,10 @@ module Puma
   # certificate.
   module Acme
     class Error < StandardError; end
+    class StaleCert < Error; end
+    class UnknownAlgorithmError < Error; end
+    class UnknownMode < Error; end
+
 
     class Plugin < Puma::Plugin
       Plugins.register('acme', self)
@@ -35,6 +37,7 @@ module Puma
         store = launcher.options[:acme_cache] || disk_store(launcher.options)
 
         poll_interval = launcher.options.fetch(:acme_poll_interval, 1)
+        mode          = launcher.options.fetch(:acme_mode, :background)
 
         @manager ||= Manager.new(
           store:,
@@ -57,10 +60,25 @@ module Puma
         cert = @manager.cert(identifiers:, algorithm:)
         if cert.provisioned?
           launcher.log_writer.debug "Acme: cert already provisioned"
+
+          bind_to(launcher, cert)
+        elsif mode == :background
+          launcher.log_writer.debug "Acme: background provisioning cert"
+
+          in_background do
+            provision(cert, poll_interval:, log_writer: launcher.log_writer)
+
+            launcher.log_writer.debug "Acme: restarting puma server"
+
+            launcher.restart
+          end
+        elsif mode == :foreground
+          launcher.log_writer.debug "Acme: provisioning cert"
+
+          provision(cert, poll_interval:, log_writer: launcher.log_writer)
           bind_to(launcher, cert)
         else
-          launcher.log_writer.debug "Acme: background provisioning cert"
-          in_background { provision(launcher, cert, poll_interval:) }
+          raise UnknownMode, mode
         end
 
         # in_background { renew(launcher, identifiers:, algorithm:) }
@@ -101,15 +119,15 @@ module Puma
         end
       end
 
-      def provision(launcher, cert, poll_interval:)
-        unless @manager.account?
-          launcher.log_writer.debug "Acme: creating account"
+      def provision(cert, poll_interval:, log_writer: nil)
+        unless @manager.account(create: false)
+          log_writer&.debug "Acme: creating account"
 
           @manager.account
         end
 
         if cert.order.nil?
-          launcher.log_writer.debug "Acme: creating order"
+          log_writer&.debug "Acme: creating order"
           @manager.order!(cert)
         else
           @manager.reload!(cert)
@@ -118,25 +136,23 @@ module Puma
         loop do
           case cert.order.status.to_sym
           when :valid
-            launcher.log_writer.debug "Acme: downloading cert & restarting puma server"
+            log_writer&.debug "Acme: downloading cert"
 
             @manager.download!(cert)
 
-            launcher.restart
-
             return
           when :processing, :pending
-            launcher.log_writer.debug "Acme: waiting on #{cert.order.status} order"
+            log_writer&.debug "Acme: waiting on #{cert.order.status} order"
 
             sleep poll_interval
 
             @manager.reload!(cert)
           when :ready
-            launcher.log_writer.debug "Acme: finalizing ready order"
+            log_writer&.debug "Acme: finalizing ready order"
 
             @manager.finalize!(cert)
           when :invalid
-            launcher.log_writer.debug "Acme: invalid order, re-ordering"
+            log_writer&.debug "Acme: invalid order, re-ordering"
 
             @manager.order!(cert)
           end

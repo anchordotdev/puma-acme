@@ -4,9 +4,6 @@ require 'acme-client'
 
 module Puma
   module Acme
-    class UnknownAlgorithmError < Acme::Error; end
-    class StaleCert < Acme::Error; end
-
     class Manager
 
       CHALLENGE_TYPE = ::Acme::Client::Resources::Challenges::HTTP01::CHALLENGE_TYPE
@@ -21,12 +18,8 @@ module Puma
         @eab = eab
       end
 
-      def account?
-        @store.read(Account.key(directory:, contact:, eab:))
-      end
-
-      def account
-        @store.fetch(Account.key(directory:, contact:, eab:)) { create_account }
+      def account(create: true)
+        @store.fetch(Account.key(directory:, contact:, eab:)) { create_account if create }
       end
 
       def cert(algorithm:, identifiers:)

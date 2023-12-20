@@ -23,6 +23,11 @@ module Puma
       @options[:acme_eab_hmac_key]
     end
 
+    def acme_mode(mode = nil)
+      @options[:acme_mode] = mode if mode
+      @options[:acme_mode]
+    end
+
     def acme_renew_in(duration = nil)
       @options[:acme_renew_in] = duration if duration
       @options[:acme_renew_in]

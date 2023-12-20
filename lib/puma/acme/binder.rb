@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'puma/binder'
-
 module Puma
   class Binder
     def parse_with_before_hooks(...)

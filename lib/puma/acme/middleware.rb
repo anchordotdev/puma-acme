@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'sinatra'
-
 module Puma
   module Acme
     class Middleware < Sinatra::Base

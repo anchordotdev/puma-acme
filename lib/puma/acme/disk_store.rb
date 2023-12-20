@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'pstore'
-
 module Puma
   module Acme
     # DiskStore is a simple key/value store that persists to disk using PStore.

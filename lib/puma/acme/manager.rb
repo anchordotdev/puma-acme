@@ -1,11 +1,7 @@
 # frozen_string_literal: true
 
-require 'acme-client'
-
 module Puma
   module Acme
-    CHALLENGE_TYPE = ::Acme::Client::Resources::Challenges::HTTP01::CHALLENGE_TYPE
-
     class Manager
       attr_reader :contact, :directory, :tos_agreed, :eab
 

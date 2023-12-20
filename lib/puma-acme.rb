@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'byebug'
+
 require 'fileutils'
 require 'puma'
 require 'puma/plugin'
@@ -26,37 +28,99 @@ module Puma
         directory  = launcher.options.fetch(:acme_directory, DEFAULT_DIRECTORY)
         tos_agreed = launcher.options.fetch(:acme_tos_agreed, false)
 
-        cache = launcher.options[:acme_cache] || disk_store(launcher.options)
+        store = launcher.options[:acme_cache] || disk_store(launcher.options)
 
-        @manager = Manager.new(
-          cache:,
+        poll_interval = launcher.options.fetch(:acme_poll_interval, 1)
+
+        @manager ||= Manager.new(
+          store:,
           contact:,
           directory:,
           tos_agreed:,
         )
 
-        if cert = @manager.fetch_certificate(identifiers:, algorithm:)
-          unless launcher.options.fetch(:binds).any? {|bind| bind.start_with?(SSL_ACME_SCHEME) }
-            launcher.options.fetch(:binds) << DEFAULT_SSL_ACME_BIND
-          end
-
-          return bind_to(cert)
+        if @acme_binds.nil?
+          @acme_binds, binds = launcher.options[:binds].partition { |bind| bind.start_with?('acme://') }
+          launcher.options[:binds] = binds
         end
-
-        order = @manager.order(identifiers:)
-
-        http_challenges = order.authorizations.map {|auth| auth.http }
 
         launcher.options[:app] = Middleware.new(
           launcher.options[:app],
           manager: @manager,
-          challenges: http_challenges,
         )
 
-        true
+        cert = @manager.cert(identifiers:, algorithm:)
+        if cert.provisioned?
+          launcher.log_writer.debug "Acme: cert already provisioned"
+          bind_to(launcher, cert)
+        else
+          launcher.log_writer.debug "Acme: background provisioning cert"
+          in_background { provision(launcher, cert, poll_interval:) }
+        end
+
+        # in_background { renew(launcher, identifiers:, algorithm:) }
       end
 
       protected
+
+      def bind_to(launcher, cert)
+        params = {
+          'key_pem' => cert.key_pem,
+          'cert_pem' => cert.cert_pem,
+        }
+
+        ctx = MiniSSL::ContextBuilder.new(params, launcher.log_writer).context
+
+        launcher.binder.after_parse_hook do
+          @acme_binds.each do |str|
+            uri = URI.parse(str)
+            launcher.binder.add_ssl_listener(uri.host, uri.port, ctx)
+
+            cert.identifiers.each do |identifier|
+              launcher.log_writer.log "* Listening on ssl://#{identifier.value}:#{uri.port}"
+            end
+          end
+        end
+      end
+
+      def provision(launcher, cert, poll_interval:)
+        if cert.order.nil?
+          launcher.log_writer.debug "Acme: creating order"
+          @manager.order!(cert)
+        else
+          @manager.reload!(cert)
+        end
+
+        loop do
+          case cert.order.status.to_sym
+          when :valid
+            launcher.log_writer.debug "Acme: downloading cert & restarting puma server"
+
+            @manager.download!(cert)
+
+            launcher.restart
+
+            return
+          when :processing, :pending
+            launcher.log_writer.debug "Acme: waiting on #{cert.order.status} order"
+
+            sleep poll_interval
+
+            @manager.reload!(cert)
+          when :ready
+            launcher.log_writer.debug "Acme: finalizing ready order"
+
+            @manager.finalize!(cert)
+          when :invalid
+            launcher.log_writer.debug "Acme: invalid order, re-ordering"
+
+            @manager.order!(cert)
+          end
+        end
+      rescue StaleCert
+        sleep poll_interval
+        retry
+      end
 
       def disk_store(options)
         cache_dir = options[:cache_dir] || 'tmp/acme'
@@ -69,8 +133,10 @@ module Puma
   end
 end
 
+require_relative './puma-acme/binder'
 require_relative './puma-acme/disk_store'
 require_relative './puma-acme/dsl'
 require_relative './puma-acme/manager'
 require_relative './puma-acme/middleware'
+require_relative './puma-acme/structs'
 require_relative './puma-acme/version'

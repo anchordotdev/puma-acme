@@ -17,7 +17,7 @@ module Minitest
       events = Puma::Events.new
       events.on_booted { ready.close }
 
-      log_writer = Puma::LogWriter.strings
+      log_writer = Puma::LogWriter::DEFAULT
 
       launcher = Puma::Launcher.new(configuration, events:, log_writer:)
 
@@ -31,7 +31,7 @@ module Minitest
 
       wait_for(port)
 
-      yield
+      yield(events)
     ensure
       launcher&.stop
     end
@@ -45,7 +45,7 @@ module Minitest
 
       loop do
         return TCPSocket.new(host, port, connect_timeout: timeout).close
-      rescue Errno::ECONNREFUSED, Errno::EHOSTUNREACH, SocketError
+      rescue Errno::ECONNREFUSED, Errno::EHOSTUNREACH, Errno::EINVAL, SocketError
         raise if Time.now.to_i > kaboom_at
       end
     end

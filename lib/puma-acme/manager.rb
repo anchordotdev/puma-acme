@@ -4,53 +4,121 @@ require 'acme-client'
 
 module Puma
   module Acme
+    class UnknownAlgorithmError < Acme::Error; end
+    class StaleCert < Acme::Error; end
+
     class Manager
 
-      class UnknownAlgorithmError < Acme::Error; end
+      CHALLENGE_TYPE = ::Acme::Client::Resources::Challenges::HTTP01::CHALLENGE_TYPE
 
       attr_reader :contact, :directory, :tos_agreed
 
-      def initialize(cache:, contact: nil, directory:, tos_agreed:)
-        @cache = cache
+      def initialize(store:, contact: nil, directory:, on_finished: nil, tos_agreed:)
+        @store = store
         @contact = contact
         @directory = directory
-        @tos_agreed = tos_agreed
+        @on_finished = on_finished
+        @tos_agreed = [true, directory].include?(tos_agreed)
 
-        @client = acme_client(@contact || :default)
+        @client = acme_client
       end
 
-      def fetch_certificate(identifiers:, algorithm:)
-        return nil
+      def account
+        @store.fetch(Account.key(directory:, contact:)) { create_account }
       end
 
-      def order(identifiers:, now: DateTime.now)
-        key = [:order, *identifiers.sort]
-        url = @cache.fetch(key) { new_order(identifiers:).url }
+      def cert(algorithm:, identifiers:)
+        @store.fetch(Cert.key(algorithm:, identifiers:)) { Cert.new(algorithm:, identifiers:) }
+      end
 
-        order = @client.order(url:)
-        if DateTime.parse(order.expires) <= now
-          @cache.delete(key)
-          return order(identifiers:, now:)
+      def answer(type:, token:)
+        @store.read(Answer.key(type:, token:))
+      end
+
+      def order!(cert)
+        if @store.read(cert.key) != cert
+          raise StaleCert
         end
 
-        order
+        identifiers = cert.identifiers.map(&:value)
+        acme_order = @client.new_order(**cert.to_h.slice(:not_before, :not_after).merge(identifiers:))
+        cert.order = Order.from(acme_order)
+
+        # TODO: maybe move this to caller
+        cert.order.authorizations.each do |authz|
+          authz.challenges.each do |challenge|
+            next unless challenge.type == CHALLENGE_TYPE
+
+            validate!(challenge)
+          end
+        end
+
+        @store.write(cert.key, cert)
+      end
+
+      def validate!(challenge)
+        @store.write(challenge.answer.key, challenge.answer)
+
+        acme_challenge = @client.request_challenge_validation(url: challenge.url)
+        acme_challenge
+      end
+
+      def finalize!(cert)
+        if @store.read(cert.key) != cert
+          raise StaleCert
+        end
+
+        identifiers = cert.identifiers.map(&:value)
+        common_name = identifiers.first
+        private_key = new_key(cert.algorithm)
+
+        csr = ::Acme::Client::CertificateRequest.new(private_key:, subject: { common_name: })
+
+        acme_order = @client.order(url: cert.order.url)
+        if acme_order.finalize(csr:)
+          cert.order = Order.from(acme_order)
+          cert.key_pem = private_key.to_pem
+
+          @store.write(cert.key, cert)
+        end
+      end
+
+      def download!(cert)
+        if @store.read(cert.key) != cert
+          raise StaleCert
+        end
+
+        acme_order = @client.order(url: cert.order.url)
+
+        cert.cert_pem = acme_order.certificate
+
+        @store.write(cert.key, cert)
+      end
+
+      def reload!(cert)
+        if @store.read(cert.key) != cert
+          raise StaleCert
+        end
+
+        acme_order = @client.order(url: cert.order.url)
+        cert.order = Order.from(acme_order)
+
+        @store.write(cert.key, cert)
       end
 
       protected
 
-      def acme_client(id)
-        account_parts = @cache.fetch([:account, id]) { new_account }
-
-        private_key = load_key(account_parts[:jwk], account_parts[:key])
+      def acme_client
+        account = self.account
 
         ::Acme::Client.new(
-          kid: account_parts[:kid],
-          private_key:,
+          kid: account.kid,
+          private_key: load_key(account.jwk, account.key_pem),
           directory:,
         )
       end
 
-      def new_account
+      def create_account
         private_key = new_key(:ecdsa)
 
         client = ::Acme::Client.new(
@@ -58,21 +126,18 @@ module Puma
           directory:,
         )
 
-        account = client.new_account(
+        acme_account = client.new_account(
           contact:,
-          terms_of_service_agreed: [true, directory].include?(tos_agreed),
+          terms_of_service_agreed: tos_agreed,
           # external_account_binding:
         )
 
-        {
+        Account.new(acme_account.to_h.slice(:url, :status, :contact).merge({
           jwk: client.jwk.to_h,
           kid: client.kid,
-          key: private_key._dump(:unused),
-        }
-      end
-
-      def new_order(identifiers:)
-        @client.new_order(identifiers:)
+          key_pem: private_key.to_pem,
+          tos_agreed:,
+        }))
       end
 
       def new_key(algorithm)

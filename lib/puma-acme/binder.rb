@@ -2,17 +2,17 @@ require 'puma/binder'
 
 module Puma
  class Binder 
-   def parse_with_after_hooks(...)
-     original_parse(...)
+   def parse_with_before_hooks(...)
+     @before_parse_hooks&.each(&:call)
 
-     @after_parse_hooks&.each(&:call)
+     original_parse(...)
    end
 
    alias_method :original_parse, :parse
-   alias_method :parse, :parse_with_after_hooks
+   alias_method :parse, :parse_with_before_hooks
 
-   def after_parse_hook(&hook)
-     (@after_parse_hooks ||= []) << hook
+   def before_parse_hook(&hook)
+     (@before_parse_hooks ||= []) << hook
    end
  end
 end

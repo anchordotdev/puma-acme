@@ -3,8 +3,7 @@
 require_relative './test_helper'
 
 class IntegrationTest < Minitest::Test
-  def test_certificate_provisioning
-
+  def test_default_provisioning
     if (missing_vars = %w[ACME_SERVER_NAME ACME_HTTP_PORT ACME_HTTPS_PORT].select { |var| ENV[var].nil? }).any?
       skip "missing required env var for integration test: #{missing_vars * ', '}"
     end
@@ -36,6 +35,7 @@ class IntegrationTest < Minitest::Test
         response = HTTP.get("https://#{server_name}/")
 
         assert_equal response.body.to_s, 'hello world'
+
         break
       rescue HTTP::ConnectionError
         sleep 1

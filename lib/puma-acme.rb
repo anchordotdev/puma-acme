@@ -71,14 +71,27 @@ module Puma
 
         ctx = MiniSSL::ContextBuilder.new(params, launcher.log_writer).context
 
-        launcher.binder.after_parse_hook do
+        new_servers = {}
+
+        launcher.binder.before_parse_hook do
           @acme_binds.each do |str|
             uri = URI.parse(str)
-            launcher.binder.add_ssl_listener(uri.host, uri.port, ctx)
+
+            if fd = launcher.binder.inherited_fds.delete(str)
+              io = launcher.binder.inherit_ssl_listener(fd, ctx)
+              launcher.log_writer.log "* Inherited #{str}"
+            elsif fd = launcher.binder.activated_sockets.delete([ :acme, uri.host, uri.port ])
+              io = launcher.binder.inherit_ssl_listener(fd, ctx)
+              launcher.log_writer.log "* Activated #{str}"
+            else
+              io = launcher.binder.add_ssl_listener(uri.host, uri.port, ctx)
+            end
 
             cert.identifiers.each do |identifier|
               launcher.log_writer.log "* Listening on ssl://#{identifier.value}:#{uri.port}"
             end
+
+            launcher.binder.listeners << [str, io]
           end
         end
       end

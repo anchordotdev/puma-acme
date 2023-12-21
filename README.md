@@ -1,6 +1,7 @@
 # puma-acme
 
-A Puma plugin for for SSL certs via ACME. 
+A [Puma](https://puma.io/) plugin for for SSL certs via
+[ACME](https://www.rfc-editor.org/rfc/rfc8555.html).
 
 Easily add HTTPS support to a Puma server. To use, configure the server
 name(s), accept the TOS, and add a bind directive. The plugin will handle ACME

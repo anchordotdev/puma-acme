@@ -2,6 +2,7 @@
 
 module Puma
   module Acme
+    # Puma plugin for SSL certificate provisioning via an ACME server.
     class Plugin < Puma::Plugin
       Plugins.register('acme', self)
 

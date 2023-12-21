@@ -2,6 +2,7 @@
 
 module Puma
   module Acme
+    # ACME challenge response handler for HTTP-01 challenges.
     class Middleware < Sinatra::Base
       def initialize(app, manager:)
         @app = app

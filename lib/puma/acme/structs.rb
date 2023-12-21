@@ -2,6 +2,7 @@
 
 module Puma
   module Acme
+    # https://www.rfc-editor.org/rfc/rfc8555.html#section-7.1.2
     Account = Struct.new(:directory, :url, :status, :contact, :tos_agreed, :eab, :jwk, :kid, :key_pem,
                          keyword_init: true) do
       def self.key(directory:, contact: nil, eab: nil)
@@ -35,7 +36,7 @@ module Puma
       end
     end
 
-    # https://datatracker.ietf.org/doc/html/rfc8555#section-7.1.4
+    # https://www.rfc-editor.org/rfc/rfc8555.html#section-7.1.4
     Authz = Struct.new(:url, :identifier, :status, :expires, :challenges, :wildcard, keyword_init: true) do
       def self.from(acme_authz)
         identifier = Identifier.from(acme_authz.identifier)
@@ -86,7 +87,7 @@ module Puma
       end
     end
 
-    # https://datatracker.ietf.org/doc/html/rfc8555#section-8
+    # https://www.rfc-editor.org/rfc/rfc8555.html#section-8
     Challenge = Struct.new(:url, :type, :token, :error, :answer, keyword_init: true) do
       def self.from(acme_challenge)
         new(acme_challenge.to_h.slice(*members).merge(type: acme_challenge.challenge_type,

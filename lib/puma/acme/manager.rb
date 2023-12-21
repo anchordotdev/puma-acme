@@ -2,6 +2,7 @@
 
 module Puma
   module Acme
+    # Manager tracks and performs the ACME workflow steps for a certificate.
     class Manager
       attr_reader :contact, :directory, :tos_agreed, :eab
 

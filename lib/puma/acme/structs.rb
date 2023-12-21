@@ -60,7 +60,11 @@ module Puma
       end
 
       def key
-        [:cert, algorithm, identifiers]
+        [:cert, algorithm, identifiers&.map(&:key)]
+      end
+
+      def names
+        identifiers&.map(&:value)
       end
 
       def usable?(now: Time.now.utc)
@@ -109,6 +113,10 @@ module Puma
 
       def self.from(acme_identifier)
         new(acme_identifier.to_h.slice(*members.map(&:to_s)))
+      end
+
+      def key
+        [:identifier, type, value]
       end
     end
 

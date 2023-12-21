@@ -57,17 +57,17 @@ module Puma
             end
           end
         elsif mode == :background
-          @log_writer.debug 'Acme: background provisioning cert'
+          @log_writer.log 'Puma background provisioning cert via puma-acme plugin...'
 
           in_background do
             provision(cert, poll_interval:)
 
-            @log_writer.debug 'Acme: restarting puma server'
+            @log_writer.log 'Puma restarting after provisioning cert via puma-acme plugin...'
 
             launcher.restart
           end
         elsif mode == :foreground
-          @log_writer.debug 'Acme: provisioning cert'
+          @log_writer.log 'Puma foreground provisioning cert via puma-acme plugin...'
 
           provision(cert, poll_interval:)
           bind_to(launcher, cert)
@@ -109,7 +109,7 @@ module Puma
             end
 
             cert.identifiers.each do |identifier|
-              @log_writer.log "* Listening on ssl://#{identifier.value}:#{uri.port}"
+              @log_writer.log "* Listening on ssl://#{uri.host}:#{uri.port} for https://#{identifier.value} (puma-acme)"
             end
 
             launcher.binder.listeners << [str, io]

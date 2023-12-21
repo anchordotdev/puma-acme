@@ -3,9 +3,24 @@
 module Puma
   # Extend the ::Puma::DSL module with the configuration options we want
   class DSL
+    def acme_algorithm(algo = nil)
+      @options[:acme_algorithm] = algo if algo
+      @options[:acme_algorithm]
+    end
+
+    def acme_cache(cache = nil)
+      @options[:acme_cache] = cache if cache
+      @options[:acme_cache]
+    end
+
     def acme_cache_dir(dir = nil)
       @options[:acme_cache_dir] = dir if dir
       @options[:acme_cache_dir]
+    end
+
+    def acme_contact(contact = nil)
+      @options[:acme_contact] = contact if contact
+      @options[:acme_contact]
     end
 
     def acme_directory(url = nil)

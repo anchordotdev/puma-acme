@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'lib/puma-acme/version'
+require_relative 'lib/puma/acme/version'
 
 Gem::Specification.new do |s|
   s.name        = 'puma-acme'

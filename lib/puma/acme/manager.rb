@@ -15,7 +15,9 @@ module Puma
       end
 
       def account(create: true)
-        @store.fetch(Account.key(directory:, contact:, eab:)) { create_account if create }
+        return @store.read(Account.key(directory:, contact:, eab:)) unless create
+
+        @store.fetch(Account.key(directory:, contact:, eab:)) { create_account }
       end
 
       def cert(algorithm:, identifiers:)
@@ -27,7 +29,7 @@ module Puma
       end
 
       def order!(cert)
-        raise StaleCert if @store.read(cert.key) != cert
+        stale_check!(cert)
 
         identifiers = cert.identifiers.map(&:value)
         acme_order = client.new_order(**cert.to_h.slice(:not_before, :not_after).merge(identifiers:))
@@ -52,13 +54,13 @@ module Puma
       end
 
       def finalize!(cert)
-        raise StaleCert if @store.read(cert.key) != cert
+        stale_check!(cert)
 
-        identifiers = cert.identifiers.map(&:value)
-        common_name = identifiers.first
+        names = cert.identifiers.map(&:value)
+        common_name = names.first
         private_key = new_key(cert.algorithm)
 
-        csr = ::Acme::Client::CertificateRequest.new(private_key:, subject: { common_name: })
+        csr = ::Acme::Client::CertificateRequest.new(common_name:, names:, private_key:)
 
         acme_order = client.order(url: cert.order.url)
         return unless acme_order.finalize(csr:)
@@ -70,7 +72,7 @@ module Puma
       end
 
       def download!(cert)
-        raise StaleCert if @store.read(cert.key) != cert
+        stale_check!(cert)
 
         acme_order = client.order(url: cert.order.url)
 
@@ -80,7 +82,7 @@ module Puma
       end
 
       def reload!(cert)
-        raise StaleCert if @store.read(cert.key) != cert
+        stale_check!(cert)
 
         acme_order = client.order(url: cert.order.url)
         cert.order = Order.from(acme_order)
@@ -129,7 +131,7 @@ module Puma
       end
 
       def new_key(algorithm)
-        case algorithm
+        case algorithm.to_sym
         when :ecdsa then OpenSSL::PKey::EC.generate('prime256v1')
         when :rsa then OpenSSL::PKey::RSA.new(2048)
         else raise UnknownAlgorithmError, "unknown key algorithm '#{algorithm}'"
@@ -142,6 +144,10 @@ module Puma
         when { kty: 'EC', crv: 'P-256' } then OpenSSL::PKey::EC.new(data)
         else raise UnknownAlgorithmError, "unknown key algorithm '#{jwk[:kty]}'"
         end
+      end
+
+      def stale_check!(cert)
+        raise StaleCert if @store.read(cert.key) != cert
       end
     end
   end

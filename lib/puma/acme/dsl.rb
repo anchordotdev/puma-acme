@@ -43,6 +43,11 @@ module Puma
       @options[:acme_mode]
     end
 
+    def acme_poll_interval(interval = nil)
+      @options[:acme_poll_interval] = interval if interval
+      @options[:acme_poll_interval]
+    end
+
     def acme_renew_at(duration = nil)
       @options[:acme_renew_at] = duration if duration
       @options[:acme_renew_at]

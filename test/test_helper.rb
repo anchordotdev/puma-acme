@@ -6,8 +6,10 @@ require 'puma-acme'
 
 require 'http'
 require 'minitest/autorun'
+require 'minitest/mock_expectations'
 require 'puma/configuration'
 require 'puma/events'
+require 'securerandom'
 
 module Minitest
   class Test

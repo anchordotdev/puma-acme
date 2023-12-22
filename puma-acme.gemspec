@@ -26,7 +26,8 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'puma', '~> 6.4'
   s.add_runtime_dependency 'sinatra', '~> 3.1'
 
-  s.add_development_dependency 'minitest', '~> 5.14'
-  s.add_development_dependency 'rake', '~> 13.0'
   s.add_development_dependency 'http.rb', '~> 0.12'
+  s.add_development_dependency 'minitest', '~> 5.14'
+  s.add_development_dependency 'minitest-mock_expectations', '~> 1.2'
+  s.add_development_dependency 'rake', '~> 13.0'
 end

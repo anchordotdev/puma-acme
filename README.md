@@ -46,7 +46,7 @@ config.bind 'tcp://0.0.0.0:80'
 plugin :acme
 
 acme_server_name 'puma-acme.example.org' 
-acme_tos_accepted true
+acme_tos_agreed true
 
 config.bind 'acme://0.0.0.0:443'
 ```
@@ -54,6 +54,8 @@ config.bind 'acme://0.0.0.0:443'
 advanced:
 
 ```ruby
+# config/puma.rb
+
 # Account contact URL(s). For email, use the form 'mailto:user@domain.tld'.
 # Recommended for account recovery and revocation.
 acme_contact 'mailto:acme-user@exmaple.org'
@@ -74,7 +76,7 @@ acme_directory 'https://acme.example.org/directory'
 
 # Accept the Terms of Service (TOS) of an ACME server, the value can be either
 # the server's directory URL as a string, or true to accept any server's TOS.
-acme_tos_accepted 'https://acme.example.org/directory'
+acme_tos_agreed 'https://acme.example.org/directory'
 
 # External Account Binding (EAB) token KID & secret HMAC key for the ACME
 # server. See RFC 8555, Section 7.3.4 for details.

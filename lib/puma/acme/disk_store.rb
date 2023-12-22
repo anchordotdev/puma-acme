@@ -11,13 +11,15 @@ module Puma
 
       def delete(key, _options = nil)
         @pstore.transaction do
-          @pstore.delete(key)
+          !!@pstore.delete(key)
         end
       end
 
       def fetch(key, _options = nil, &block)
+        raise ArgumentError if block.nil?
+
         @pstore.transaction do
-          @pstore[key] || (@pstore[key] = block.call)
+          @pstore[key] || (@pstore[key] = block.call(key))
         end
       end
 
@@ -30,6 +32,7 @@ module Puma
       def write(key, value, _options = nil)
         @pstore.transaction do
           @pstore[key] = value
+          true
         end
       end
     end

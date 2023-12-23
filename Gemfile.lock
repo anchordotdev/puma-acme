@@ -41,6 +41,7 @@ GEM
       rack-protection (= 3.1.0)
       tilt (~> 2.0)
     tilt (2.3.0)
+    vcr (6.2.0)
 
 PLATFORMS
   arm64-darwin-23
@@ -51,6 +52,7 @@ DEPENDENCIES
   minitest-mock_expectations (~> 1.2)
   puma-acme!
   rake (~> 13.0)
+  vcr (~> 6.1)
 
 BUNDLED WITH
    2.3.26

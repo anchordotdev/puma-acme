@@ -14,18 +14,24 @@ module Puma
         @eab = eab
       end
 
-      def account(create: true)
-        return @store.read(Account.key(directory:, contact:, eab:)) unless create
-
-        @store.fetch(Account.key(directory:, contact:, eab:)) { create_account }
+      def account
+        @store.read(Account.key(directory:, contact:, eab:))
       end
 
       def cert(algorithm:, identifiers:)
-        @store.fetch(Cert.key(algorithm:, identifiers:)) { Cert.new(algorithm:, identifiers:) }
+        @store.read(Cert.key(algorithm:, identifiers:))
       end
 
       def answer(type:, token:)
         @store.read(Answer.key(type:, token:))
+      end
+
+      def account!
+        @store.fetch(Account.key(directory:, contact:, eab:)) { create_account }
+      end
+
+      def cert!(algorithm:, identifiers:)
+        @store.fetch(Cert.key(algorithm:, identifiers:)) { Cert.new(algorithm:, identifiers:) }
       end
 
       def order!(cert)
@@ -44,7 +50,7 @@ module Puma
           end
         end
 
-        @store.write(cert.key, cert)
+        @store.write(cert.key, cert) && cert.order
       end
 
       def validate!(challenge)
@@ -68,7 +74,7 @@ module Puma
         cert.order = Order.from(acme_order)
         cert.key_pem = private_key.to_pem
 
-        @store.write(cert.key, cert)
+        @store.write(cert.key, cert) && cert
       end
 
       def download!(cert)
@@ -78,7 +84,7 @@ module Puma
 
         cert.cert_pem = acme_order.certificate
 
-        @store.write(cert.key, cert)
+        @store.write(cert.key, cert) && cert
       end
 
       def reload!(cert)
@@ -87,7 +93,7 @@ module Puma
         acme_order = client.order(url: cert.order.url)
         cert.order = Order.from(acme_order)
 
-        @store.write(cert.key, cert)
+        @store.write(cert.key, cert) && cert
       end
 
       protected
@@ -97,7 +103,7 @@ module Puma
       end
 
       def acme_client
-        account = self.account
+        account = self.account!
 
         ::Acme::Client.new(
           kid: account.kid,

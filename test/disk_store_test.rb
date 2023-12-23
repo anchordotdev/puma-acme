@@ -2,8 +2,6 @@
 
 require_relative './test_helper'
 
-require 'byebug'
-
 class DiskStoreTest < Minitest::Test
   # based on CacheStoreBehavior in activesupport
 

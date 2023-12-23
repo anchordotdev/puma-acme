@@ -43,7 +43,7 @@ module Puma
 
         @log_writer = launcher.log_writer
 
-        cert = @manager.cert(identifiers:, algorithm:)
+        cert = @manager.cert!(identifiers:, algorithm:)
         if cert.usable?
           @log_writer.debug 'Acme: cert already provisioned'
 
@@ -118,10 +118,10 @@ module Puma
       end
 
       def provision(cert, poll_interval:)
-        unless @manager.account(create: false)
+        unless @manager.account
           @log_writer.debug 'Acme: creating account'
 
-          @manager.account
+          @manager.account!
         end
 
         if cert.order.nil?

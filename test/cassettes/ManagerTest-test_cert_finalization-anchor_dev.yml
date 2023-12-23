@@ -1,0 +1,749 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://anchor.dev/benburkert/localhost/x509/ca/acme
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Acme::Client v2.0.15 (https://github.com/unixcharles/acme-client)
+      Content-Type:
+      - application/jose+json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: ''
+    headers:
+      Connection:
+      - keep-alive
+      Vary:
+      - Accept
+      Server:
+      - Fly/9e37a80f (2023-12-22)
+      X-Cache-Hits:
+      - '0'
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains
+      Fly-Request-Id:
+      - 01HJBTNEVXBSVX441SEZK97GPR-iad
+      X-Runtime:
+      - '0.003034'
+      X-Content-Type-Options:
+      - nosniff
+      X-Cache:
+      - MISS
+      X-Served-By:
+      - cache-iad-kiad7000096-IAD
+      Content-Security-Policy:
+      - 'default-src ''self'' https:; font-src ''self'' https: data:; img-src ''self''
+        https: data:; object-src ''none''; script-src ''self'' bam.nr-data.net js-agent.newrelic.com
+        www.googletagmanager.com; style-src ''self'' ''unsafe-inline'' bam.nr-data.net;
+        connect-src ''self'' www.google-analytics.com; base-uri ''self'''
+      Via:
+      - 1.1 fly.io
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Xss-Protection:
+      - '0'
+      Date:
+      - "<Date>"
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+      Content-Type:
+      - application/json; charset=utf-8
+      X-Permitted-Cross-Domain-Policies:
+      - none
+      Etag:
+      - W/"68eb90a8d0288d673ddbb4a8dc4c6609"
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      X-Request-Id:
+      - e9c179d7-9d51-4f9f-8a1a-234c248103b3
+      X-Download-Options:
+      - noopen
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"newNonce":"https://anchor.dev/benburkert/localhost/x509/ca/acme/new-nonce","newAccount":"https://anchor.dev/benburkert/localhost/x509/ca/acme/new-account","newOrder":"https://anchor.dev/benburkert/localhost/x509/ca/acme/new-order","revokeCert":"https://anchor.dev/benburkert/localhost/x509/ca/acme/revoke-cert","meta":{"website":"https://anchor.dev","externalAccountRequired":true}}'
+  recorded_at: Sat, 23 Dec 2023 17:13:17 GMT
+- request:
+    method: head
+    uri: https://anchor.dev/benburkert/localhost/x509/ca/acme/new-nonce
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Acme::Client v2.0.15 (https://github.com/unixcharles/acme-client)
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: ''
+    headers:
+      Connection:
+      - keep-alive
+      X-Served-By:
+      - cache-iad-kiad7000117-IAD
+      X-Xss-Protection:
+      - '0'
+      X-Permitted-Cross-Domain-Policies:
+      - none
+      X-Cache:
+      - MISS
+      X-Runtime:
+      - '0.005506'
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+      X-Frame-Options:
+      - SAMEORIGIN
+      Content-Type:
+      - text/html
+      X-Cache-Hits:
+      - '0'
+      Via:
+      - 1.1 fly.io
+      Server:
+      - Fly/9e37a80f (2023-12-22)
+      Cache-Control:
+      - no-cache
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains
+      X-Content-Type-Options:
+      - nosniff
+      Date:
+      - "<Date>"
+      X-Download-Options:
+      - noopen
+      Replay-Nonce:
+      - "<Replay-Nonce>"
+      Location:
+      - <https://anchor.dev/benburkert/localhost/x509/ca/acme>;rel="index"
+      X-Request-Id:
+      - d1548204-b45f-4a63-8464-28425b5ada25
+      Content-Security-Policy:
+      - 'default-src ''self'' https:; font-src ''self'' https: data:; img-src ''self''
+        https: data:; object-src ''none''; script-src ''self'' bam.nr-data.net js-agent.newrelic.com
+        www.googletagmanager.com; style-src ''self'' ''unsafe-inline'' bam.nr-data.net;
+        connect-src ''self'' www.google-analytics.com; base-uri ''self'''
+      Fly-Request-Id:
+      - 01HJBTNEYTG2EQ52D05JZKJEKB-iad
+    body:
+      encoding: UTF-8
+      string: ''
+  recorded_at: Sat, 23 Dec 2023 17:13:18 GMT
+- request:
+    method: post
+    uri: https://anchor.dev/benburkert/localhost/x509/ca/acme/new-account
+    body:
+      encoding: UTF-8
+      string: '{"protected":"eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiIsIm5vbmNlIjoibFphMXBLY0s4eXhWWEcyVWc5RWZoUWt6QmNqYzJreFciLCJ1cmwiOiJodHRwczovL2FuY2hvci5kZXYvYmVuYnVya2VydC9sb2NhbGhvc3QveDUwOS9jYS9hY21lL25ldy1hY2NvdW50IiwiandrIjp7ImNydiI6IlAtMjU2Iiwia3R5IjoiRUMiLCJ4IjoicU5ZQmFPeEVZLUZzRk1iUWVxTl9wZFFVZjF5OG5JMEc0NTB3bHBoSzRURSIsInkiOiJvZmcwOThPSWFoNDJvRXdtUEthVmRBNFZpSjNvVlBic3FvSjVNM0tMQjJjIn19","payload":"eyJjb250YWN0IjpbImJlbkBiZW5idXJrZXJ0LmNvbSJdLCJ0ZXJtc09mU2VydmljZUFncmVlZCI6dHJ1ZSwiZXh0ZXJuYWxBY2NvdW50QmluZGluZyI6eyJwcm90ZWN0ZWQiOiJleUowZVhBaU9pSktWMVFpTENKaGJHY2lPaUpJVXpJMU5pSXNJbXRwWkNJNkltRmhaVjlLZGtzNE1YSnBVbEJ0TTFkelMzZG1kVzlvYlRaWFFVUTVaakZQVlU4Mk5YVmxabGszWmxSSFZHRjZkQ0lzSW5WeWJDSTZJbWgwZEhCek9pOHZZVzVqYUc5eUxtUmxkaTlpWlc1aWRYSnJaWEowTDJ4dlkyRnNhRzl6ZEM5NE5UQTVMMk5oTDJGamJXVXZibVYzTFdGalkyOTFiblFpZlEiLCJwYXlsb2FkIjoiZXlKamNuWWlPaUpRTFRJMU5pSXNJbXQwZVNJNklrVkRJaXdpZUNJNkluRk9XVUpoVDNoRldTMUdjMFpOWWxGbGNVNWZjR1JSVldZeGVUaHVTVEJITkRVd2QyeHdhRXMwVkVVaUxDSjVJam9pYjJabk1EazRUMGxoYURReWIwVjNiVkJMWVZaa1FUUldhVW96YjFaUVluTnhiMG8xVFROTFRFSXlZeUo5Iiwic2lnbmF0dXJlIjoiaXRTeE9Ha1JTRzU0SE0xRGlaTUlRQ2lZNmtoLUplclFxZjhZeHZ1bmpSQSJ9fQ","signature":"kKkRczRGpSKoyldkR9dmP3j53H6cOANbdMO0xyNVR7XvmZdweB_gzMqsAf-jMH45FZ6DsNDTUkI5THpmCiU-jQ"}'
+    headers:
+      User-Agent:
+      - Acme::Client v2.0.15 (https://github.com/unixcharles/acme-client)
+      Content-Type:
+      - application/jose+json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 201
+      message: ''
+    headers:
+      Connection:
+      - keep-alive
+      Vary:
+      - Accept
+      X-Cache:
+      - MISS
+      Content-Type:
+      - application/json; charset=utf-8
+      X-Request-Id:
+      - 2fe380df-6b40-45a5-8ab8-6bc784b6eccd
+      X-Served-By:
+      - cache-iad-kiad7000034-IAD
+      X-Xss-Protection:
+      - '0'
+      Fly-Request-Id:
+      - 01HJBTNF18STDWWHP846GTFAJC-iad
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Content-Security-Policy:
+      - 'default-src ''self'' https:; font-src ''self'' https: data:; img-src ''self''
+        https: data:; object-src ''none''; script-src ''self'' bam.nr-data.net js-agent.newrelic.com
+        www.googletagmanager.com; style-src ''self'' ''unsafe-inline'' bam.nr-data.net;
+        connect-src ''self'' www.google-analytics.com; base-uri ''self'''
+      Server:
+      - Fly/9e37a80f (2023-12-22)
+      Location:
+      - https://anchor.dev/benburkert/localhost/x509/ca/acme/acct/C675:D4A3:FBA9
+      X-Runtime:
+      - '0.130763'
+      X-Download-Options:
+      - noopen
+      X-Permitted-Cross-Domain-Policies:
+      - none
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains
+      X-Frame-Options:
+      - SAMEORIGIN
+      Etag:
+      - W/"c9c65dc66fba1d4ce67f342bfef21927"
+      Replay-Nonce:
+      - "<Replay-Nonce>"
+      Via:
+      - 1.1 fly.io
+      X-Cache-Hits:
+      - '0'
+      Date:
+      - "<Date>"
+      X-Content-Type-Options:
+      - nosniff
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"status":"valid","contact":["ben@benburkert.com"],"orders":"https://anchor.dev/benburkert/localhost/x509/ca/acme/acct/C675:D4A3:FBA9/orders"}'
+  recorded_at: Sat, 23 Dec 2023 17:13:18 GMT
+- request:
+    method: get
+    uri: https://anchor.dev/benburkert/localhost/x509/ca/acme
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Acme::Client v2.0.15 (https://github.com/unixcharles/acme-client)
+      Content-Type:
+      - application/jose+json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: ''
+    headers:
+      Connection:
+      - keep-alive
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+      X-Request-Id:
+      - 96677589-d492-4f28-8877-4748df2832d9
+      Vary:
+      - Accept
+      X-Cache:
+      - MISS
+      Content-Type:
+      - application/json; charset=utf-8
+      Fly-Request-Id:
+      - 01HJBTNFAHKV2JE58BN6CVWRK8-iad
+      X-Served-By:
+      - cache-iad-kiad7000023-IAD
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Etag:
+      - W/"68eb90a8d0288d673ddbb4a8dc4c6609"
+      Content-Security-Policy:
+      - 'default-src ''self'' https:; font-src ''self'' https: data:; img-src ''self''
+        https: data:; object-src ''none''; script-src ''self'' bam.nr-data.net js-agent.newrelic.com
+        www.googletagmanager.com; style-src ''self'' ''unsafe-inline'' bam.nr-data.net;
+        connect-src ''self'' www.google-analytics.com; base-uri ''self'''
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains
+      X-Download-Options:
+      - noopen
+      Server:
+      - Fly/9e37a80f (2023-12-22)
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      X-Permitted-Cross-Domain-Policies:
+      - none
+      X-Runtime:
+      - '0.003266'
+      Date:
+      - "<Date>"
+      Via:
+      - 1.1 fly.io
+      X-Xss-Protection:
+      - '0'
+      X-Cache-Hits:
+      - '0'
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"newNonce":"https://anchor.dev/benburkert/localhost/x509/ca/acme/new-nonce","newAccount":"https://anchor.dev/benburkert/localhost/x509/ca/acme/new-account","newOrder":"https://anchor.dev/benburkert/localhost/x509/ca/acme/new-order","revokeCert":"https://anchor.dev/benburkert/localhost/x509/ca/acme/revoke-cert","meta":{"website":"https://anchor.dev","externalAccountRequired":true}}'
+  recorded_at: Sat, 23 Dec 2023 17:13:18 GMT
+- request:
+    method: head
+    uri: https://anchor.dev/benburkert/localhost/x509/ca/acme/new-nonce
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Acme::Client v2.0.15 (https://github.com/unixcharles/acme-client)
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: ''
+    headers:
+      Connection:
+      - keep-alive
+      Cache-Control:
+      - no-cache
+      X-Runtime:
+      - '0.015012'
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Cache:
+      - MISS
+      Fly-Request-Id:
+      - 01HJBTNFG1HBZM0558RS2CVKE5-iad
+      Date:
+      - "<Date>"
+      X-Download-Options:
+      - noopen
+      Replay-Nonce:
+      - "<Replay-Nonce>"
+      Server:
+      - Fly/9e37a80f (2023-12-22)
+      X-Cache-Hits:
+      - '0'
+      X-Xss-Protection:
+      - '0'
+      X-Request-Id:
+      - 73331711-bc3a-4463-9cd9-dc1df901bc15
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+      Content-Security-Policy:
+      - 'default-src ''self'' https:; font-src ''self'' https: data:; img-src ''self''
+        https: data:; object-src ''none''; script-src ''self'' bam.nr-data.net js-agent.newrelic.com
+        www.googletagmanager.com; style-src ''self'' ''unsafe-inline'' bam.nr-data.net;
+        connect-src ''self'' www.google-analytics.com; base-uri ''self'''
+      X-Served-By:
+      - cache-iad-kiad7000133-IAD
+      X-Permitted-Cross-Domain-Policies:
+      - none
+      Location:
+      - <https://anchor.dev/benburkert/localhost/x509/ca/acme>;rel="index"
+      Content-Type:
+      - text/html
+      X-Content-Type-Options:
+      - nosniff
+      Via:
+      - 1.1 fly.io
+    body:
+      encoding: UTF-8
+      string: ''
+  recorded_at: Sat, 23 Dec 2023 17:13:18 GMT
+- request:
+    method: post
+    uri: https://anchor.dev/benburkert/localhost/x509/ca/acme/new-order
+    body:
+      encoding: UTF-8
+      string: '{"protected":"eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiIsIm5vbmNlIjoiOXdGeWc0NERibGZmLUpaZm01bHAwSnlGbWZlOFNXS3giLCJ1cmwiOiJodHRwczovL2FuY2hvci5kZXYvYmVuYnVya2VydC9sb2NhbGhvc3QveDUwOS9jYS9hY21lL25ldy1vcmRlciIsImtpZCI6Imh0dHBzOi8vYW5jaG9yLmRldi9iZW5idXJrZXJ0L2xvY2FsaG9zdC94NTA5L2NhL2FjbWUvYWNjdC9DNjc1OkQ0QTM6RkJBOSJ9","payload":"eyJpZGVudGlmaWVycyI6W3sidHlwZSI6ImRucyIsInZhbHVlIjoiZm9yZWdyb3VuZC5sY2wuaG9zdCJ9XX0","signature":"Xt6IutBof9Sh4vW42AZRMJQaUz3kWTHa7DocUf7nZlrvqRFFgWWFNBY4DCK0sRdQ5WqE-YklsODfy-JKl9t2ng"}'
+    headers:
+      User-Agent:
+      - Acme::Client v2.0.15 (https://github.com/unixcharles/acme-client)
+      Content-Type:
+      - application/jose+json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 201
+      message: ''
+    headers:
+      Connection:
+      - keep-alive
+      X-Served-By:
+      - cache-iad-kiad7000065-IAD
+      X-Permitted-Cross-Domain-Policies:
+      - none
+      X-Content-Type-Options:
+      - nosniff
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      X-Request-Id:
+      - bcafc19d-fbb7-4af3-8d93-eef076ceb379
+      Etag:
+      - W/"069611685750e7faf777d328958360e2"
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains
+      X-Cache-Hits:
+      - '0'
+      X-Runtime:
+      - '0.159415'
+      Content-Security-Policy:
+      - 'default-src ''self'' https:; font-src ''self'' https: data:; img-src ''self''
+        https: data:; object-src ''none''; script-src ''self'' bam.nr-data.net js-agent.newrelic.com
+        www.googletagmanager.com; style-src ''self'' ''unsafe-inline'' bam.nr-data.net;
+        connect-src ''self'' www.google-analytics.com; base-uri ''self'''
+      X-Cache:
+      - MISS
+      Fly-Request-Id:
+      - 01HJBTNFKQ9PD3AW952RWYRYF9-iad
+      Vary:
+      - Accept
+      Via:
+      - 1.1 fly.io
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+      X-Frame-Options:
+      - SAMEORIGIN
+      Replay-Nonce:
+      - "<Replay-Nonce>"
+      Location:
+      - https://anchor.dev/benburkert/localhost/x509/ca/acme/order/4312:B711:E5E2
+      X-Download-Options:
+      - noopen
+      X-Xss-Protection:
+      - '0'
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - "<Date>"
+      Server:
+      - Fly/9e37a80f (2023-12-22)
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"status":"ready","expires":"2023-12-23T18:13:18.796Z","identifiers":[{"type":"dns","value":"foreground.lcl.host"}],"notBefore":null,"notAfter":null,"authorizations":["https://anchor.dev/benburkert/localhost/x509/ca/acme/authz/A697:2075:BF21"],"finalize":"https://anchor.dev/benburkert/localhost/x509/ca/acme/order/4312:B711:E5E2/finalize"}'
+  recorded_at: Sat, 23 Dec 2023 17:13:18 GMT
+- request:
+    method: post
+    uri: https://anchor.dev/benburkert/localhost/x509/ca/acme/authz/A697:2075:BF21
+    body:
+      encoding: UTF-8
+      string: '{"protected":"eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiIsIm5vbmNlIjoiM3RsQUllOWJiUGcyNFNPSnQzakZtbjBNNjd1LURBenAiLCJ1cmwiOiJodHRwczovL2FuY2hvci5kZXYvYmVuYnVya2VydC9sb2NhbGhvc3QveDUwOS9jYS9hY21lL2F1dGh6L0E2OTc6MjA3NTpCRjIxIiwia2lkIjoiaHR0cHM6Ly9hbmNob3IuZGV2L2JlbmJ1cmtlcnQvbG9jYWxob3N0L3g1MDkvY2EvYWNtZS9hY2N0L0M2NzU6RDRBMzpGQkE5In0","payload":"","signature":"UTH69BbdahpI5MmL0LiB1f4dg6ywevlEpezWNzMMAzMDZX2Diuftn0ZdrT1vC3ULdFfVxLaqyPeV4cbtYmNWWA"}'
+    headers:
+      User-Agent:
+      - Acme::Client v2.0.15 (https://github.com/unixcharles/acme-client)
+      Content-Type:
+      - application/jose+json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: ''
+    headers:
+      Connection:
+      - keep-alive
+      Date:
+      - "<Date>"
+      X-Xss-Protection:
+      - '0'
+      X-Request-Id:
+      - 85d5f8e8-aeed-4e3b-904b-c0987702dbc2
+      X-Content-Type-Options:
+      - nosniff
+      Content-Security-Policy:
+      - 'default-src ''self'' https:; font-src ''self'' https: data:; img-src ''self''
+        https: data:; object-src ''none''; script-src ''self'' bam.nr-data.net js-agent.newrelic.com
+        www.googletagmanager.com; style-src ''self'' ''unsafe-inline'' bam.nr-data.net;
+        connect-src ''self'' www.google-analytics.com; base-uri ''self'''
+      X-Runtime:
+      - '0.059894'
+      Via:
+      - 1.1 fly.io
+      X-Frame-Options:
+      - SAMEORIGIN
+      Etag:
+      - W/"c79c1ade54cbe7bbc6bdbc9c7709ee3e"
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains
+      Fly-Request-Id:
+      - 01HJBTNFTY8KEP7FRC6CXFG1C1-iad
+      Server:
+      - Fly/9e37a80f (2023-12-22)
+      X-Cache:
+      - MISS
+      X-Permitted-Cross-Domain-Policies:
+      - none
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+      X-Download-Options:
+      - noopen
+      Location:
+      - <https://anchor.dev/benburkert/localhost/x509/ca/acme>;rel="index"
+      X-Served-By:
+      - cache-iad-kiad7000122-IAD
+      Replay-Nonce:
+      - "<Replay-Nonce>"
+      X-Cache-Hits:
+      - '0'
+      Content-Type:
+      - application/json; charset=utf-8
+      Vary:
+      - Accept
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"status":"valid","expires":"2023-12-23T18:13:18.796Z","identifier":{"type":"dns","value":"foreground.lcl.host"},"challenges":[],"wildcard":false}'
+  recorded_at: Sat, 23 Dec 2023 17:13:19 GMT
+- request:
+    method: post
+    uri: https://anchor.dev/benburkert/localhost/x509/ca/acme/order/4312:B711:E5E2
+    body:
+      encoding: UTF-8
+      string: '{"protected":"eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiIsIm5vbmNlIjoiblFHSERyamVMYUFNU3RhWGRKT1NoRGQ1Zi1XTGhKN1ciLCJ1cmwiOiJodHRwczovL2FuY2hvci5kZXYvYmVuYnVya2VydC9sb2NhbGhvc3QveDUwOS9jYS9hY21lL29yZGVyLzQzMTI6QjcxMTpFNUUyIiwia2lkIjoiaHR0cHM6Ly9hbmNob3IuZGV2L2JlbmJ1cmtlcnQvbG9jYWxob3N0L3g1MDkvY2EvYWNtZS9hY2N0L0M2NzU6RDRBMzpGQkE5In0","payload":"","signature":"C3vc3MNSPk8Ok4JDSiranwGmHMzmDJHpTGFyPapuuwbpCru_BgXN-B91CxoSEvxX0QbbZj0XHclrLWlcMW7Jig"}'
+    headers:
+      User-Agent:
+      - Acme::Client v2.0.15 (https://github.com/unixcharles/acme-client)
+      Content-Type:
+      - application/jose+json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: ''
+    headers:
+      Connection:
+      - keep-alive
+      Via:
+      - 1.1 fly.io
+      Date:
+      - "<Date>"
+      X-Download-Options:
+      - noopen
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains
+      X-Runtime:
+      - '0.031939'
+      Replay-Nonce:
+      - "<Replay-Nonce>"
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Content-Security-Policy:
+      - 'default-src ''self'' https:; font-src ''self'' https: data:; img-src ''self''
+        https: data:; object-src ''none''; script-src ''self'' bam.nr-data.net js-agent.newrelic.com
+        www.googletagmanager.com; style-src ''self'' ''unsafe-inline'' bam.nr-data.net;
+        connect-src ''self'' www.google-analytics.com; base-uri ''self'''
+      X-Permitted-Cross-Domain-Policies:
+      - none
+      Vary:
+      - Accept
+      Content-Type:
+      - application/json; charset=utf-8
+      Location:
+      - https://anchor.dev/benburkert/localhost/x509/ca/acme/order/4312:B711:E5E2
+      X-Served-By:
+      - cache-iad-kiad7000082-IAD
+      Etag:
+      - W/"7014391621ba8808a52dd942c4caaf1e"
+      X-Frame-Options:
+      - SAMEORIGIN
+      Server:
+      - Fly/9e37a80f (2023-12-22)
+      Fly-Request-Id:
+      - 01HJBTNG2EJVHXXKCHR2GQSNF4-iad
+      X-Content-Type-Options:
+      - nosniff
+      X-Request-Id:
+      - 0ed6a733-6bbc-42aa-ad04-51bed2548714
+      X-Cache:
+      - MISS
+      X-Xss-Protection:
+      - '0'
+      X-Cache-Hits:
+      - '0'
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"status":"ready","expires":"2023-12-23T18:13:18.796Z","identifiers":[{"type":"dns","value":"foreground.lcl.host"}],"notBefore":null,"notAfter":null,"authorizations":["https://anchor.dev/benburkert/localhost/x509/ca/acme/authz/A697:2075:BF21"],"finalize":"https://anchor.dev/benburkert/localhost/x509/ca/acme/order/4312:B711:E5E2/finalize","certificate":null}'
+  recorded_at: Sat, 23 Dec 2023 17:13:19 GMT
+- request:
+    method: post
+    uri: https://anchor.dev/benburkert/localhost/x509/ca/acme/order/4312:B711:E5E2/finalize
+    body:
+      encoding: UTF-8
+      string: '{"protected":"eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiIsIm5vbmNlIjoiQUxOcjhYUVhmSkd3a25EWnpYMG4tZ2RFUWM4QzQwTkoiLCJ1cmwiOiJodHRwczovL2FuY2hvci5kZXYvYmVuYnVya2VydC9sb2NhbGhvc3QveDUwOS9jYS9hY21lL29yZGVyLzQzMTI6QjcxMTpFNUUyL2ZpbmFsaXplIiwia2lkIjoiaHR0cHM6Ly9hbmNob3IuZGV2L2JlbmJ1cmtlcnQvbG9jYWxob3N0L3g1MDkvY2EvYWNtZS9hY2N0L0M2NzU6RDRBMzpGQkE5In0","payload":"eyJjc3IiOiJNSUlCQ2pDQnNRSUJBakFlTVJ3d0dnWURWUVFEREJObWIzSmxaM0p2ZFc1a0xteGpiQzVvYjNOME1Ga3dFd1lIS29aSXpqMENBUVlJS29aSXpqMERBUWNEUWdBRUF6MUZkcWRpR0pxdVhUTEgwalFiM0ZXbHdMUk1RSk16WGRPb3dCcHF6RG1DSmU1X3VhWTJoYUFrNkkwNkJsMTJlS1R3eEdwV2cyZTdFdUxucHN6dC1hQXhNQzhHQ1NxR1NJYjNEUUVKRGpFaU1DQXdIZ1lEVlIwUkJCY3dGWUlUWm05eVpXZHliM1Z1WkM1c1kyd3VhRzl6ZERBS0JnZ3Foa2pPUFFRREFnTklBREJGQWlFQThoNmRyMHltU0ZmVm1QMEpBTU45eEc0eTA3UGpqYmFlX3MyS2NsMEhyaDRDSUN5S3B6VW9EMUttVmFCUC0tNDNkcXpFMGhlRmdxdkNaT1NtWFNFaG82MUcifQ","signature":"MV2bOwVj5uPe--WFhL5Ou9FuXylnGoRfnt0JopM9hr5sjVgud__hJRJf-CHNqV_sChWghPGYXObr3mk4BwajcQ"}'
+    headers:
+      User-Agent:
+      - Acme::Client v2.0.15 (https://github.com/unixcharles/acme-client)
+      Content-Type:
+      - application/jose+json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: ''
+    headers:
+      Connection:
+      - keep-alive
+      X-Download-Options:
+      - noopen
+      Replay-Nonce:
+      - "<Replay-Nonce>"
+      Vary:
+      - Accept
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Date:
+      - "<Date>"
+      Content-Type:
+      - application/json; charset=utf-8
+      X-Permitted-Cross-Domain-Policies:
+      - none
+      Location:
+      - https://anchor.dev/benburkert/localhost/x509/ca/acme/order/4312:B711:E5E2
+      Content-Security-Policy:
+      - 'default-src ''self'' https:; font-src ''self'' https: data:; img-src ''self''
+        https: data:; object-src ''none''; script-src ''self'' bam.nr-data.net js-agent.newrelic.com
+        www.googletagmanager.com; style-src ''self'' ''unsafe-inline'' bam.nr-data.net;
+        connect-src ''self'' www.google-analytics.com; base-uri ''self'''
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Xss-Protection:
+      - '0'
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains
+      X-Cache:
+      - MISS
+      Server:
+      - Fly/9e37a80f (2023-12-22)
+      X-Served-By:
+      - cache-iad-kiad7000104-IAD
+      X-Content-Type-Options:
+      - nosniff
+      Via:
+      - 1.1 fly.io
+      X-Request-Id:
+      - 8f427410-ad7b-472b-a831-15b4936267ff
+      Fly-Request-Id:
+      - 01HJBTNG6D92ZBKX1WPM4QJJQ1-iad
+      X-Cache-Hits:
+      - '0'
+      X-Runtime:
+      - '0.357465'
+      Etag:
+      - W/"d7dfddd9bc9f8566e814d356ae770262"
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"status":"valid","expires":"2023-12-23T18:13:18.796Z","identifiers":[{"type":"dns","value":"foreground.lcl.host"}],"notBefore":null,"notAfter":null,"authorizations":["https://anchor.dev/benburkert/localhost/x509/ca/acme/authz/A697:2075:BF21"],"finalize":"https://anchor.dev/benburkert/localhost/x509/ca/acme/order/4312:B711:E5E2/finalize","certificate":"https://anchor.dev/benburkert/localhost/x509/ca/acme/cert/4312:B711:E5E2"}'
+  recorded_at: Sat, 23 Dec 2023 17:13:19 GMT
+- request:
+    method: post
+    uri: https://anchor.dev/benburkert/localhost/x509/ca/acme/authz/A697:2075:BF21
+    body:
+      encoding: UTF-8
+      string: '{"protected":"eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiIsIm5vbmNlIjoiVWlCOE05bnczWlpuVHc3QU9JdXBBdkpCb2NyYlh0MGUiLCJ1cmwiOiJodHRwczovL2FuY2hvci5kZXYvYmVuYnVya2VydC9sb2NhbGhvc3QveDUwOS9jYS9hY21lL2F1dGh6L0E2OTc6MjA3NTpCRjIxIiwia2lkIjoiaHR0cHM6Ly9hbmNob3IuZGV2L2JlbmJ1cmtlcnQvbG9jYWxob3N0L3g1MDkvY2EvYWNtZS9hY2N0L0M2NzU6RDRBMzpGQkE5In0","payload":"","signature":"zkQQ2Anvy5faeVfwpmneU5LqtIVi_cs800SWgwKsyT354Dg7dgrJgFl7oBq-xoOV6JDNJAkaMSE5uyhBPZufcA"}'
+    headers:
+      User-Agent:
+      - Acme::Client v2.0.15 (https://github.com/unixcharles/acme-client)
+      Content-Type:
+      - application/jose+json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: ''
+    headers:
+      Connection:
+      - keep-alive
+      Content-Security-Policy:
+      - 'default-src ''self'' https:; font-src ''self'' https: data:; img-src ''self''
+        https: data:; object-src ''none''; script-src ''self'' bam.nr-data.net js-agent.newrelic.com
+        www.googletagmanager.com; style-src ''self'' ''unsafe-inline'' bam.nr-data.net;
+        connect-src ''self'' www.google-analytics.com; base-uri ''self'''
+      X-Runtime:
+      - '0.055574'
+      X-Frame-Options:
+      - SAMEORIGIN
+      Etag:
+      - W/"c79c1ade54cbe7bbc6bdbc9c7709ee3e"
+      X-Permitted-Cross-Domain-Policies:
+      - none
+      Vary:
+      - Accept
+      X-Served-By:
+      - cache-iad-kiad7000038-IAD
+      X-Cache:
+      - MISS
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Via:
+      - 1.1 fly.io
+      Location:
+      - <https://anchor.dev/benburkert/localhost/x509/ca/acme>;rel="index"
+      Content-Type:
+      - application/json; charset=utf-8
+      X-Download-Options:
+      - noopen
+      Replay-Nonce:
+      - "<Replay-Nonce>"
+      X-Xss-Protection:
+      - '0'
+      Fly-Request-Id:
+      - 01HJBTNGMAT1AAWJREM1YTEJH3-iad
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      X-Cache-Hits:
+      - '0'
+      X-Request-Id:
+      - 0cb2902d-b0f9-41a8-b3cb-39e41ab42a3c
+      Server:
+      - Fly/9e37a80f (2023-12-22)
+      Date:
+      - "<Date>"
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"status":"valid","expires":"2023-12-23T18:13:18.796Z","identifier":{"type":"dns","value":"foreground.lcl.host"},"challenges":[],"wildcard":false}'
+  recorded_at: Sat, 23 Dec 2023 17:13:19 GMT
+recorded_with: VCR 6.2.0

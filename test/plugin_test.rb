@@ -4,6 +4,6 @@ require_relative './test_helper'
 
 class PluginTest < Minitest::Test
   def test_registration
-    assert_kind_of Class, Puma::Plugins.find('acme')
+    assert_equal Puma::Acme::Plugin, Puma::Plugins.find('acme')
   end
 end

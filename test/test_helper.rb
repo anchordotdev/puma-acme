@@ -10,6 +10,8 @@ require 'minitest/mock_expectations'
 require 'puma/configuration'
 require 'puma/events'
 require 'securerandom'
+require 'vcr'
+require 'webmock'
 
 module Minitest
   class Test
@@ -64,6 +66,35 @@ module Minitest
       rescue Errno::ECONNREFUSED, Errno::EHOSTUNREACH, Errno::EINVAL, Errno::ECONNRESET, SocketError
         return
       end
+    end
+
+    def with_vcr(*extra_ids, &block)
+      VCR.use_cassette([class_name, name, *extra_ids&.map(&:to_s)].join('-'), &block)
+    end
+  end
+end
+
+VCR.configure do |c|
+  c.allow_http_connections_when_no_cassette = false
+  c.cassette_library_dir = 'test/cassettes'
+  c.hook_into :webmock
+  c.default_cassette_options = {
+    record: :new_episodes
+  }
+
+  %w[Boulder-Requester Date Replay-Nonce].each do |header|
+    c.filter_sensitive_data("<#{header}>") do |interaction|
+      interaction.response.headers[header]&.first
+    end
+  end
+
+  c.before_record do |interaction|
+    if ip_addr = interaction.response.body[/"initialIp": "(\d{1,3}.){3}\d{1,3}"/]
+      interaction.filter!(ip_addr, '"initialIp": "<IP>"')
+    end
+
+    if contact = interaction.response.body[/"mailto:[^"]+"/]
+      interaction.filter!(contact, '"mailto:<EMAIL>"')
     end
   end
 end

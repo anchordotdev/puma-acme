@@ -3,14 +3,20 @@
 require_relative './test_helper'
 
 class IntegrationTest < Minitest::Test
+  def setup
+    if ENV['INTEGRATION_TEST'] != name
+      skip "set INTEGRATION_TEST=#{name} to run"
+    end
+  end
+
   def test_default_provisioning
-    if (missing_vars = %w[ACME_SERVER_NAME ACME_HTTP_PORT ACME_HTTPS_PORT].select { |var| ENV[var].nil? }).any?
-      skip "missing required env var for integration test: #{missing_vars * ', '}"
+    if (missing_vars = %w[SERVER_NAME HTTP_PORT HTTPS_PORT].select { |var| ENV[var].nil? }).any?
+      fail "missing required env var for integration test: #{missing_vars * ', '}"
     end
 
-    server_name = "default.#{ENV.fetch('ACME_SERVER_NAME')}"
-    http_port = ENV.fetch('ACME_HTTP_PORT')
-    https_port = ENV.fetch('ACME_HTTPS_PORT')
+    server_name = "default.#{ENV.fetch('SERVER_NAME')}"
+    http_port = ENV.fetch('HTTP_PORT')
+    https_port = ENV.fetch('HTTPS_PORT')
 
     configuration = Puma::Configuration.new do |config|
       config.plugin :acme
@@ -44,17 +50,17 @@ class IntegrationTest < Minitest::Test
   end
 
   def test_eab_based_provisioning
-    if (missing_vars = %w[ACME_DIRECTORY ACME_EAB_KID ACME_EAB_HMAC_KEY ACME_HTTP_PORT ACME_HTTPS_PORT ACME_SERVER_NAME].select { |var| ENV[var].nil? }).any?
-      skip "missing required env var for integration test: #{missing_vars * ', '}"
+    if (missing_vars = %w[DIRECTORY EAB_KID EAB_HMAC_KEY HTTP_PORT HTTPS_PORT SERVER_NAME].select { |var| ENV[var].nil? }).any?
+      fail "missing required env var for integration test: #{missing_vars * ', '}"
     end
 
-    server_name = "eab.#{ENV.fetch('ACME_SERVER_NAME')}"
-    http_port = ENV.fetch('ACME_HTTP_PORT')
-    https_port = ENV.fetch('ACME_HTTPS_PORT')
+    server_name = "eab.#{ENV.fetch('SERVER_NAME')}"
+    http_port = ENV.fetch('HTTP_PORT')
+    https_port = ENV.fetch('HTTPS_PORT')
 
-    directory = ENV.fetch('ACME_DIRECTORY')
-    eab_kid = ENV.fetch('ACME_EAB_KID')
-    eab_hmac_key = ENV.fetch('ACME_EAB_HMAC_KEY')
+    directory = ENV.fetch('DIRECTORY')
+    eab_kid = ENV.fetch('EAB_KID')
+    eab_hmac_key = ENV.fetch('EAB_HMAC_KEY')
 
     configuration = Puma::Configuration.new do |config|
       config.plugin :acme
@@ -89,16 +95,16 @@ class IntegrationTest < Minitest::Test
   end
 
   def test_foreground_provisioning
-    if (missing_vars = %w[ACME_ZC_DIRECTORY ACME_ZC_SERVER_NAME].select { |var| ENV[var].nil? }).any?
-      skip "missing required env var for integration test: #{missing_vars * ', '}"
+    if (missing_vars = %w[DIRECTORY SERVER_NAME].select { |var| ENV[var].nil? }).any?
+      fail "missing required env var for integration test: #{missing_vars * ', '}"
     end
 
-    server_name = ENV.fetch('ACME_ZC_SERVER_NAME')
-    https_port = ENV.fetch('ACME_ZC_HTTPS_PORT', unused_port)
+    server_name = ENV.fetch('SERVER_NAME')
+    https_port = ENV.fetch('HTTPS_PORT', unused_port)
 
-    directory = ENV.fetch('ACME_ZC_DIRECTORY')
-    eab_kid = ENV.fetch('ACME_ZC_EAB_KID', nil)
-    eab_hmac_key = ENV.fetch('ACME_ZC_EAB_HMAC_KEY', nil)
+    directory = ENV.fetch('DIRECTORY')
+    eab_kid = ENV.fetch('EAB_KID', nil)
+    eab_hmac_key = ENV.fetch('EAB_HMAC_KEY', nil)
 
     configuration = Puma::Configuration.new do |config|
       config.plugin :acme
@@ -124,13 +130,13 @@ class IntegrationTest < Minitest::Test
   end
 
   def test_default_renewal
-    if (missing_vars = %w[ACME_SERVER_NAME ACME_HTTP_PORT ACME_HTTPS_PORT].select { |var| ENV[var].nil? }).any?
-      skip "missing required env var for integration test: #{missing_vars * ', '}"
+    if (missing_vars = %w[SERVER_NAME HTTP_PORT HTTPS_PORT].select { |var| ENV[var].nil? }).any?
+      fail "missing required env var for integration test: #{missing_vars * ', '}"
     end
 
-    server_name = "default.#{ENV.fetch('ACME_SERVER_NAME')}"
-    http_port = ENV.fetch('ACME_HTTP_PORT')
-    https_port = ENV.fetch('ACME_HTTPS_PORT')
+    server_name = "default.#{ENV.fetch('SERVER_NAME')}"
+    http_port = ENV.fetch('HTTP_PORT')
+    https_port = ENV.fetch('HTTPS_PORT')
 
     configuration = Puma::Configuration.new do |config|
       config.plugin :acme

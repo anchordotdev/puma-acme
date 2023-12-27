@@ -21,9 +21,9 @@ class ManagerTest < Minitest::Test
     @manager = Manager.new(
       store: DiskStore.new(@tmp_dir),
       tos_agreed: true,
-      contact:,
-      directory:,
-      eab:
+      contact: contact,
+      directory: directory,
+      eab: eab
     )
 
     @cert = @manager.cert!(algorithm: :ecdsa, identifiers: [domain])

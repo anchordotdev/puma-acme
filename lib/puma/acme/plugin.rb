@@ -26,11 +26,11 @@ module Puma
         renew_interval = launcher.options.fetch(:acme_renew_interval, DEFAULT_RENEW_INTERVAL)
 
         @manager = Manager.new(
-          store:,
-          contact:,
-          directory:,
-          tos_agreed:,
-          eab:
+          store: store,
+          contact: contact,
+          directory: directory,
+          tos_agreed: tos_agreed,
+          eab: eab
         )
 
         @acme_binds, binds = launcher.options[:binds].partition { |bind| bind.start_with?('acme://') }
@@ -43,7 +43,7 @@ module Puma
 
         @log_writer = launcher.log_writer
 
-        cert = @manager.cert!(identifiers:, algorithm:)
+        cert = @manager.cert!(identifiers: identifiers, algorithm: algorithm)
         if cert.usable?
           @log_writer.debug 'Acme: cert already provisioned'
 
@@ -51,7 +51,7 @@ module Puma
 
           if renew_at
             in_background do
-              renew(cert, renew_at:, renew_interval:, poll_interval:)
+              renew(cert, renew_at: renew_at, renew_interval: renew_interval, poll_interval: poll_interval)
 
               launcher.restart
             end
@@ -60,7 +60,7 @@ module Puma
           @log_writer.log 'Puma background provisioning cert via puma-acme plugin...'
 
           in_background do
-            provision(cert, poll_interval:)
+            provision(cert, poll_interval: poll_interval)
 
             @log_writer.log 'Puma restarting after provisioning cert via puma-acme plugin...'
 
@@ -69,12 +69,12 @@ module Puma
         elsif mode == :foreground
           @log_writer.log 'Puma foreground provisioning cert via puma-acme plugin...'
 
-          provision(cert, poll_interval:)
+          provision(cert, poll_interval: poll_interval)
           bind_to(launcher, cert)
 
           if renew_at
             in_background do
-              renew(cert, renew_at:, renew_interval:, poll_interval:)
+              renew(cert, renew_at: renew_at, renew_interval: renew_interval, poll_interval: poll_interval)
 
               launcher.restart
             end
@@ -163,7 +163,7 @@ module Puma
       def renew(cert, renew_at:, renew_interval:, poll_interval:)
         if cert.order.status.to_sym != :valid
           # finish provisioning aborted renewal
-          return provision(cert, poll_interval:)
+          return provision(cert, poll_interval: poll_interval)
         end
 
         loop do
@@ -175,7 +175,7 @@ module Puma
 
           @manager.order!(cert)
 
-          return provision(cert, poll_interval:)
+          return provision(cert, poll_interval: poll_interval)
         end
       rescue StaleCert
         sleep poll_interval

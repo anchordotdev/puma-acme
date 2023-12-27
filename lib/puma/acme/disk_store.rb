@@ -19,7 +19,7 @@ module Puma
         raise ArgumentError if block.nil?
 
         @pstore.transaction do
-          @pstore[key] || (@pstore[key] = block.call(key))
+          @pstore[key] || (@pstore[key] = yield(key))
         end
       end
 

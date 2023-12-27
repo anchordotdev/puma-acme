@@ -15,30 +15,30 @@ module Puma
       end
 
       def account
-        @store.read(Account.key(directory:, contact:, eab:))
+        @store.read(Account.key(directory: directory, contact: contact, eab: eab))
       end
 
       def cert(algorithm:, identifiers:)
-        @store.read(Cert.key(algorithm:, identifiers:))
+        @store.read(Cert.key(algorithm: algorithm, identifiers: identifiers))
       end
 
       def answer(type:, token:)
-        @store.read(Answer.key(type:, token:))
+        @store.read(Answer.key(type: type, token: token))
       end
 
       def account!
-        @store.fetch(Account.key(directory:, contact:, eab:)) { create_account }
+        @store.fetch(Account.key(directory: directory, contact: contact, eab: eab)) { create_account }
       end
 
       def cert!(algorithm:, identifiers:)
-        @store.fetch(Cert.key(algorithm:, identifiers:)) { Cert.new(algorithm:, identifiers:) }
+        @store.fetch(Cert.key(algorithm: algorithm, identifiers: identifiers)) { Cert.new(algorithm: algorithm, identifiers: identifiers) }
       end
 
       def order!(cert)
         stale_check!(cert)
 
         identifiers = cert.identifiers.map(&:value)
-        acme_order = client.new_order(**cert.to_h.slice(:not_before, :not_after).merge(identifiers:))
+        acme_order = client.new_order(**cert.to_h.slice(:not_before, :not_after).merge(identifiers: identifiers))
         cert.order = Order.from(acme_order)
 
         # TODO: maybe move this to caller
@@ -66,10 +66,10 @@ module Puma
         common_name = names.first
         private_key = new_key(cert.algorithm)
 
-        csr = ::Acme::Client::CertificateRequest.new(common_name:, names:, private_key:)
+        csr = ::Acme::Client::CertificateRequest.new(common_name: common_name, names: names, private_key: private_key)
 
         acme_order = client.order(url: cert.order.url)
-        return unless acme_order.finalize(csr:)
+        return unless acme_order.finalize(csr: csr)
 
         cert.order = Order.from(acme_order)
         cert.key_pem = private_key.to_pem
@@ -108,7 +108,7 @@ module Puma
         ::Acme::Client.new(
           kid: account.kid,
           private_key: load_key(account.jwk, account.key_pem),
-          directory:
+          directory: directory
         )
       end
 
@@ -116,12 +116,12 @@ module Puma
         private_key = new_key(:ecdsa)
 
         client = ::Acme::Client.new(
-          private_key:,
-          directory:
+          private_key: private_key,
+          directory: directory
         )
 
         acme_account = client.new_account(
-          contact:,
+          contact: contact,
           terms_of_service_agreed: tos_agreed,
           external_account_binding: eab&.to_h
         )
@@ -130,7 +130,7 @@ module Puma
           jwk: client.jwk.to_h,
           kid: client.kid,
           key_pem: private_key.to_pem,
-          tos_agreed:
+          tos_agreed: tos_agreed
         }
 
         Account.new(acme_account.to_h.slice(:url, :status, :contact).merge(account_parts))

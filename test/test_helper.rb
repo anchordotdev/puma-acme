@@ -23,7 +23,7 @@ module Minitest
 
       log_writer = Puma::LogWriter::DEFAULT
 
-      launcher = Puma::Launcher.new(configuration, events:, log_writer:)
+      launcher = Puma::Launcher.new(configuration, events: events, log_writer: log_writer)
 
       Thread.new do
         Thread.current.abort_on_exception = true

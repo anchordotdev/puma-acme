@@ -6,7 +6,7 @@ module Puma
     Account = Struct.new(:directory, :url, :status, :contact, :tos_agreed, :eab, :jwk, :kid, :key_pem,
                          keyword_init: true) do
       def self.key(directory:, contact: nil, eab: nil)
-        new(directory:, contact:, eab:).key
+        new(directory: directory, contact: contact, eab: eab).key
       end
 
       def self.from(acme_account)
@@ -28,7 +28,7 @@ module Puma
       end
 
       def self.key(type:, token:)
-        new(type:, token:).key
+        new(type: type, token: token).key
       end
 
       def key
@@ -44,19 +44,19 @@ module Puma
                                .reject { |c| c.is_a?(::Acme::Client::Resources::Challenges::Unsupported) }
                                .map { |c| Challenge.from(c) }
 
-        new(acme_authz.to_h.slice(*members).merge(challenges:, identifier:))
+        new(acme_authz.to_h.slice(*members).merge(challenges: challenges, identifier: identifier))
       end
     end
 
     Cert = Struct.new(:algorithm, :identifiers, :cert_pem, :key_pem, :order, keyword_init: true) do
       def self.key(algorithm:, identifiers:)
-        new(algorithm:, identifiers:).key
+        new(algorithm: algorithm, identifiers: identifiers).key
       end
 
       def initialize(identifiers: nil, **kwargs)
         identifiers = identifiers&.map { |value| Identifier.parse(value) }
 
-        super(identifiers:, **kwargs)
+        super(identifiers: identifiers, **kwargs)
       end
 
       def key
@@ -108,7 +108,7 @@ module Puma
     Identifier = Struct.new(:type, :value, keyword_init: true) do
       def self.parse(value)
         # TODO: ip identifiers
-        new(type: :dns, value:)
+        new(type: :dns, value: value)
       end
 
       def self.from(acme_identifier)
@@ -127,7 +127,7 @@ module Puma
         identifiers = acme_order.identifiers.map { |i| Identifier.new(i) }
         authorizations = acme_order.authorizations.map { |a| Authz.from(a) }
 
-        new(acme_order.to_h.slice(*members).merge(identifiers:, authorizations:))
+        new(acme_order.to_h.slice(*members).merge(identifiers: identifiers, authorizations: authorizations))
       end
     end
   end

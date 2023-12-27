@@ -32,7 +32,7 @@ class IntegrationTest < Minitest::Test
       config.app { [200, {}, ['hello world']] }
     end
 
-    run_server(http_port, configuration) do |events|
+    run_server(http_port, configuration) do
       response = HTTP.get("http://#{server_name}/")
 
       assert_equal response.body.to_s, 'hello world'

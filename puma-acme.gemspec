@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
   s.metadata['rubygems_mfa_required'] = 'true'
 
   s.require_paths         = ['lib']
-  s.required_ruby_version = '>= 2.3'
+  s.required_ruby_version = '>= 2.5'
 
   s.files            = Dir['{lib}/**/*'].to_a
   s.files           += ['LICENSE.txt', 'README.md', 'CHANGELOG.md', 'Gemfile', 'Gemfile.lock', 'Rakefile']

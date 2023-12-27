@@ -40,7 +40,7 @@ http_interactions:
       encoding: UTF-8
       string: |-
         {
-          "4nXEygtObvY": "https://community.letsencrypt.org/t/adding-random-entries-to-the-directory/33417",
+          "Zm2BNa_iUng": "https://community.letsencrypt.org/t/adding-random-entries-to-the-directory/33417",
           "keyChange": "https://acme-staging-v02.api.letsencrypt.org/acme/key-change",
           "meta": {
             "caaIdentities": [
@@ -55,7 +55,7 @@ http_interactions:
           "renewalInfo": "https://acme-staging-v02.api.letsencrypt.org/draft-ietf-acme-ari-01/renewalInfo/",
           "revokeCert": "https://acme-staging-v02.api.letsencrypt.org/acme/revoke-cert"
         }
-  recorded_at: Sat, 23 Dec 2023 17:07:00 GMT
+  recorded_at: Wed, 27 Dec 2023 20:12:23 GMT
 - request:
     method: head
     uri: https://acme-staging-v02.api.letsencrypt.org/acme/new-nonce
@@ -93,13 +93,13 @@ http_interactions:
     body:
       encoding: UTF-8
       string: ''
-  recorded_at: Sat, 23 Dec 2023 17:07:00 GMT
+  recorded_at: Wed, 27 Dec 2023 20:12:23 GMT
 - request:
     method: post
     uri: https://acme-staging-v02.api.letsencrypt.org/acme/new-acct
     body:
       encoding: UTF-8
-      string: '{"protected":"eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiIsIm5vbmNlIjoibU1wYldPbExfMzJvZ3prd0M1WG1QOGRHZVZSN2RieWxnYmhUODBldkVjckxUSXVPTjdJIiwidXJsIjoiaHR0cHM6Ly9hY21lLXN0YWdpbmctdjAyLmFwaS5sZXRzZW5jcnlwdC5vcmcvYWNtZS9uZXctYWNjdCIsImp3ayI6eyJjcnYiOiJQLTI1NiIsImt0eSI6IkVDIiwieCI6InFGQklpRHYtTDFKazhJSVZmQnVlcWI0U18tb2lPcEZ6UmtlVzdDRFFxN0kiLCJ5IjoiSU4wQnZ4b2lESXNmU2FORk5kRzM4S1VXRmw3ZHd1elhKS0tiZjd4M0tEdyJ9fQ","payload":"eyJjb250YWN0IjpbIm1haWx0bzpiZW5idXJrZXJ0QGFuY2hvci5kZXYiXSwidGVybXNPZlNlcnZpY2VBZ3JlZWQiOnRydWV9","signature":"7BduKGBKB_CfUJMr87b4QGXOMDaTyOj1K2BH0nEfUBdCKpGnyGyCzZKhjEyvmyZ7CX-xRxJIhxqALpQo4fGOaw"}'
+      string: '{"protected":"eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiIsIm5vbmNlIjoicmswMlJIOTZFeWZVSkJnTnJPVmx0V3k3R2hXVjYyYzhNcS1heXRiVzdXNGJxNnJCUWNVIiwidXJsIjoiaHR0cHM6Ly9hY21lLXN0YWdpbmctdjAyLmFwaS5sZXRzZW5jcnlwdC5vcmcvYWNtZS9uZXctYWNjdCIsImp3ayI6eyJjcnYiOiJQLTI1NiIsImt0eSI6IkVDIiwieCI6Ii04RUdLUnU5dzNBNkZCQnZvaTd2OGVHZjNDTHlTSXpMRXR4MUg3LUFBbTAiLCJ5Ijoic3d6ZnRuVWdscmJnU2RjSGl4ZjNELWkxNlZmdVI1WUFYTm9Qbk1lNkI5ayJ9fQ","payload":"eyJjb250YWN0IjpbIm1haWx0bzpiZW5idXJrZXJ0QGFuY2hvci5kZXYiXSwidGVybXNPZlNlcnZpY2VBZ3JlZWQiOnRydWV9","signature":"ZWE8ezTS3dcRmtOX8CSSki7p6fGAL-ToVTZ0blO3XFW2z_YvADED4xzfjhEik9fEi69rW44aMywBrFVJZoCsCg"}'
     headers:
       User-Agent:
       - Acme::Client v2.0.15 (https://github.com/unixcharles/acme-client)
@@ -121,7 +121,7 @@ http_interactions:
       Content-Type:
       - application/json
       Content-Length:
-      - '323'
+      - '324'
       Connection:
       - keep-alive
       Boulder-Requester:
@@ -132,7 +132,7 @@ http_interactions:
       - <https://acme-staging-v02.api.letsencrypt.org/directory>;rel="index"
       - <https://letsencrypt.org/documents/LE-SA-v1.3-September-21-2022.pdf>;rel="terms-of-service"
       Location:
-      - https://acme-staging-v02.api.letsencrypt.org/acme/acct/129999894
+      - https://acme-staging-v02.api.letsencrypt.org/acme/acct/130353974
       Replay-Nonce:
       - "<Replay-Nonce>"
       X-Frame-Options:
@@ -146,15 +146,15 @@ http_interactions:
           "key": {
             "kty": "EC",
             "crv": "P-256",
-            "x": "qFBIiDv-L1Jk8IIVfBueqb4S_-oiOpFzRkeW7CDQq7I",
-            "y": "IN0BvxoiDIsfSaNFNdG38KUWFl7dwuzXJKKbf7x3KDw"
+            "x": "-8EGKRu9w3A6FBBvoi7v8eGf3CLySIzLEtx1H7-AAm0",
+            "y": "swzftnUglrbgSdcHixf3D-i16VfuR5YAXNoPnMe6B9k"
           },
           "contact": [
             "mailto:<EMAIL>"
           ],
           "initialIp": "<IP>",
-          "createdAt": "2023-12-23T17:07:01.158802533Z",
+          "createdAt": "2023-12-27T20:12:23.441437307Z",
           "status": "valid"
         }
-  recorded_at: Sat, 23 Dec 2023 17:07:01 GMT
+  recorded_at: Wed, 27 Dec 2023 20:12:23 GMT
 recorded_with: VCR 6.2.0

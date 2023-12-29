@@ -9,6 +9,14 @@ class IntegrationTest < Minitest::Test
     end
   end
 
+  def run
+    WebMock.disable!
+
+    VCR.turned_off { super }
+  ensure
+    WebMock.enable!
+  end
+
   def test_default_provisioning
     if (missing_vars = %w[SERVER_NAME HTTP_PORT HTTPS_PORT].select { |var| ENV[var].nil? }).any?
       fail "missing required env var for integration test: #{missing_vars * ', '}"

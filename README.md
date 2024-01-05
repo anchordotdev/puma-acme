@@ -88,7 +88,7 @@ acme_algorithm :ecdsa
 # provisions, compatible only with zero-challenge ACME flow.
 acme_mode :background
 
-# ActiveSUpport::Cache::Store compatible cache to store account, order, and
+# ActiveSupport::Cache::Store compatible cache to store account, order, and
 # certificate data. Defaults to a local filesystem based cache.
 acme_cache Rails.cache
 

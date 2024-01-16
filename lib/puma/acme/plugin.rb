@@ -109,7 +109,7 @@ module Puma
             end
 
             cert.identifiers.each do |identifier|
-              @logger.log "* Listening on ssl://#{uri.host}:#{uri.port} for https://#{identifier.value} (puma-acme)"
+              @logger.log "* Listening on ssl://#{uri.host}:#{uri.port} for https://#{identifier.value}:#{uri.port} (puma-acme)"
             end
 
             launcher.binder.listeners << [str, io]

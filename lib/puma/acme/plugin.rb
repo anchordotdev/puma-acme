@@ -41,11 +41,11 @@ module Puma
           manager: @manager
         )
 
-        @log_writer = launcher.log_writer
+        @logger = launcher.respond_to?(:log_writer) ? launcher.log_writer : launcher.events
 
         cert = @manager.cert!(identifiers: identifiers, algorithm: algorithm)
         if cert.usable?
-          @log_writer.debug 'Acme: cert already provisioned'
+          @logger.debug 'Acme: cert already provisioned'
 
           bind_to(launcher, cert)
 
@@ -57,17 +57,17 @@ module Puma
             end
           end
         elsif mode == :background
-          @log_writer.log 'Puma background provisioning cert via puma-acme plugin...'
+          @logger.log 'Puma background provisioning cert via puma-acme plugin...'
 
           in_background do
             provision(cert, poll_interval: poll_interval)
 
-            @log_writer.log 'Puma restarting after provisioning cert via puma-acme plugin...'
+            @logger.log 'Puma restarting after provisioning cert via puma-acme plugin...'
 
             launcher.restart
           end
         elsif mode == :foreground
-          @log_writer.log 'Puma foreground provisioning cert via puma-acme plugin...'
+          @logger.log 'Puma foreground provisioning cert via puma-acme plugin...'
 
           provision(cert, poll_interval: poll_interval)
           bind_to(launcher, cert)
@@ -92,7 +92,7 @@ module Puma
           'cert_pem' => cert.cert_pem
         }
 
-        ctx = MiniSSL::ContextBuilder.new(params, @log_writer).context
+        ctx = MiniSSL::ContextBuilder.new(params, @logger).context
 
         launcher.binder.before_parse_hook do
           @acme_binds.each do |str|
@@ -100,16 +100,16 @@ module Puma
 
             if (fd = launcher.binder.inherited_fds.delete(str))
               io = launcher.binder.inherit_ssl_listener(fd, ctx)
-              @log_writer.log "* Inherited #{str}"
+              @logger.log "* Inherited #{str}"
             elsif (fd = launcher.binder.activated_sockets.delete([:acme, uri.host, uri.port]))
               io = launcher.binder.inherit_ssl_listener(fd, ctx)
-              @log_writer.log "* Activated #{str}"
+              @logger.log "* Activated #{str}"
             else
               io = launcher.binder.add_ssl_listener(uri.host, uri.port, ctx)
             end
 
             cert.identifiers.each do |identifier|
-              @log_writer.log "* Listening on ssl://#{uri.host}:#{uri.port} for https://#{identifier.value} (puma-acme)"
+              @logger.log "* Listening on ssl://#{uri.host}:#{uri.port} for https://#{identifier.value} (puma-acme)"
             end
 
             launcher.binder.listeners << [str, io]
@@ -119,13 +119,13 @@ module Puma
 
       def provision(cert, poll_interval:)
         unless @manager.account
-          @log_writer.debug 'Acme: creating account'
+          @logger.debug 'Acme: creating account'
 
           @manager.account!
         end
 
         if cert.order.nil?
-          @log_writer.debug 'Acme: creating order'
+          @logger.debug 'Acme: creating order'
           @manager.order!(cert)
         else
           @manager.reload!(cert)
@@ -134,23 +134,23 @@ module Puma
         loop do
           case cert.order.status.to_sym
           when :valid
-            @log_writer.debug 'Acme: downloading cert'
+            @logger.debug 'Acme: downloading cert'
 
             @manager.download!(cert)
 
             return
           when :processing, :pending
-            @log_writer.debug "Acme: waiting on #{cert.order.status} order"
+            @logger.debug "Acme: waiting on #{cert.order.status} order"
 
             sleep poll_interval
 
             @manager.reload!(cert)
           when :ready
-            @log_writer.debug 'Acme: finalizing ready order'
+            @logger.debug 'Acme: finalizing ready order'
 
             @manager.finalize!(cert)
           when :invalid
-            @log_writer.debug 'Acme: invalid order, re-ordering'
+            @logger.debug 'Acme: invalid order, re-ordering'
 
             @manager.order!(cert)
           end
@@ -171,7 +171,7 @@ module Puma
 
           next unless cert.renewable?(renew_at)
 
-          @log_writer.debug 'Acme: creating renewal order'
+          @logger.debug 'Acme: creating renewal order'
 
           @manager.order!(cert)
 

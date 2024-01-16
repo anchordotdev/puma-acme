@@ -23,7 +23,7 @@ Gem::Specification.new do |s|
 
   s.add_runtime_dependency 'acme-client', '~> 2.0.13'
   s.add_runtime_dependency 'pstore', '~> 0.1'
-  s.add_runtime_dependency 'puma', '~> 6.4'
+  s.add_runtime_dependency 'puma', '~> 5.6'
   s.add_runtime_dependency 'sinatra', '~> 3.1'
 
   s.add_development_dependency 'http.rb', '~> 0.12'
@@ -31,4 +31,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'minitest-mock_expectations', '~> 1.2'
   s.add_development_dependency 'rake', '~> 13.0'
   s.add_development_dependency 'vcr', '~> 6.1'
+  s.add_development_dependency 'webmock', '~> 3.19'
 end

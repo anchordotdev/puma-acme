@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 
+require 'bundler/setup'
+
 $LOAD_PATH.unshift(File.dirname(__FILE__) + '/../lib')
 
 require 'puma-acme'
 
-require 'http'
+require 'HTTP'
 require 'minitest/autorun'
 require 'minitest/mock_expectations'
 require 'puma/configuration'

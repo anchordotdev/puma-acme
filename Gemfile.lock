@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    puma-acme (0.1.3.pre)
+    puma-acme (0.1.3)
       acme-client (~> 2.0.13)
       pstore (~> 0.1)
       puma (~> 6.0)

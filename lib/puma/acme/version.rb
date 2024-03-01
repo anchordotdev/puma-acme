@@ -2,6 +2,6 @@
 
 module Puma
   module Acme
-    VERSION = '0.1.3.pre'
+    VERSION = '0.1.3'
   end
 end

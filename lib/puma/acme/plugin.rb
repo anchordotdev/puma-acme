@@ -124,7 +124,7 @@ module Puma
           @manager.account!
         end
 
-        if cert.order.nil?
+        if cert.order.nil? || cert.order.expired?
           @logger.debug 'Acme: creating order'
           @manager.order!(cert)
         else

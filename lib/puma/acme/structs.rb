@@ -67,8 +67,12 @@ module Puma
         identifiers&.map(&:value)
       end
 
+      def expired?(now: Time.now.utc)
+        x509.not_after > now
+      end
+
       def usable?(now: Time.now.utc)
-        !cert_pem.nil? && !key_pem.nil? && x509.not_after > now
+        !cert_pem.nil? && !key_pem.nil? && !expired?(now: now)
       end
 
       def renewable?(renew_in, now: Time.now.utc)
@@ -128,6 +132,10 @@ module Puma
         authorizations = acme_order.authorizations.map { |a| Authz.from(a) }
 
         new(acme_order.to_h.slice(*members).merge(identifiers: identifiers, authorizations: authorizations))
+      end
+
+      def expired?(now: Time.now.utc)
+        not_after > now
       end
     end
   end

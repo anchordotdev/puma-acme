@@ -68,7 +68,7 @@ module Puma
       end
 
       def expired?(now: Time.now.utc)
-        x509.not_after > now
+        x509.not_after < now
       end
 
       def usable?(now: Time.now.utc)
@@ -135,7 +135,7 @@ module Puma
       end
 
       def expired?(now: Time.now.utc)
-        not_after > now
+        expires < now
       end
     end
   end

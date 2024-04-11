@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+## 0.1.4 - 4/11/24
+
+- fix for expired order/cert renewal
+
 ## 0.1.3 - 3/1/24
 
 - update dependencies

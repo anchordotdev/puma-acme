@@ -25,13 +25,13 @@ class CertsTest < Minitest::Test
     csr = R509::CSR.new(
       subject: [['CN', common_name]],
       message_digest: 'SHA256',
-      key:
+      key: key
     )
 
     cert = R509::CertificateAuthority::Signer.selfsign(
-      csr:,
-      not_before:,
-      not_after:
+      csr: csr,
+      not_before: not_before,
+      not_after: not_after
     )
 
     cert.to_pem

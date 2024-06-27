@@ -59,6 +59,12 @@ module Puma
         super(identifiers: identifiers, **kwargs)
       end
 
+      def cert_pem=(pem)
+        @x509 = nil
+
+        self[:cert_pem] = pem
+      end
+
       def key
         [:cert, algorithm, identifiers&.map(&:key)]
       end

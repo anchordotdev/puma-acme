@@ -59,6 +59,7 @@ module Puma
         super(identifiers: identifiers, **kwargs)
       end
 
+      undef cert_pem=
       def cert_pem=(pem)
         @x509 = nil
 

@@ -70,6 +70,8 @@ module Puma
           @logger.log 'Puma foreground provisioning cert via puma-acme plugin...'
 
           provision(cert, poll_interval: poll_interval)
+          @logger.log "Cert provisioned for [#{cert.names.join(', ')}] via puma-acme plugin."
+
           bind_to(launcher, cert)
 
           if renew_at

@@ -1,5 +1,12 @@
 ## [Unreleased]
 
+## 0.1.6 - 07/15/24
+
+- clear memoized x509 data for Cert#cert_pem=
+- drop ruby 3.1 syntax
+- simplify bind/listening output
+- add a foreground cert provisioning success log message
+
 ## 0.1.5 - 4/11/24
 
 - further fixes to expired order/cert renewal

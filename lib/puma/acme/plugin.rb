@@ -16,9 +16,9 @@ module Puma
         tos_agreed = launcher.options.fetch(:acme_tos_agreed, false)
 
         eab_kid = launcher.options[:acme_eab_kid]
-        raise(Error, 'missing ACME_KID') if !eab_kid || eab_kid.empty?
         eab_hmac_key = launcher.options[:acme_eab_hmac_key]
-        raise(Error, 'missing ACME_HMAC_KEY') if !eab_hmac_key || eab_hmac_key.empty?
+        raise(Error, 'missing ACME_KID') if eab_hmac_key && !eab_hmac_key.empty? && (!eab_key || eab_kid.empty?)
+        raise(Error, 'missing ACME_HMAC_KEY') if eab_kid && !eab_kid.empty? && (!eab_hmac_key || eab_hmac_key.empty?)
 
         eab = Eab.new(kid: eab_kid, hmac_key: eab_hmac_key)
 

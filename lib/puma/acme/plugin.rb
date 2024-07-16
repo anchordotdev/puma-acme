@@ -7,16 +7,20 @@ module Puma
       Plugins.register('acme', self)
 
       def start(launcher)
-        identifiers = launcher.options[:acme_server_names] || raise(Error, 'missing ACME server name(s)')
+        identifiers = launcher.options[:acme_server_names]
+        raise(Error, 'missing SERVER_NAMES') if !identifiers || identifiers.empty?
         algorithm   = launcher.options.fetch(:acme_algorithm, :ecdsa)
 
         contact    = launcher.options.fetch(:acme_contact, nil)
         directory  = launcher.options.fetch(:acme_directory, DEFAULT_DIRECTORY)
         tos_agreed = launcher.options.fetch(:acme_tos_agreed, false)
 
-        if (eab_kid = launcher.options[:acme_eab_kid])
-          eab = Eab.new(kid: eab_kid, hmac_key: launcher.options.fetch(:acme_eab_hmac_key))
-        end
+        eab_kid = launcher.options[:acme_eab_kid]
+        raise(Error, 'missing ACME_KID') if !eab_kid || eab_kid.empty?
+        eab_hmac_key = launcher.options[:acme_eab_hmac_key]
+        raise(Error, 'missing ACME_HMAC_KEY') if !eab_hmac_key || eab_hmac_key.empty?
+
+        eab = Eab.new(kid: eab_kid, hmac_key: eab_hmac_key)
 
         store = launcher.options[:acme_cache] || disk_store(launcher.options)
 

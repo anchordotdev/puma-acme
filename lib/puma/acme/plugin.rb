@@ -114,7 +114,7 @@ module Puma
               @logger.log "* Listening on https://#{identifier.value}:#{uri.port} (puma-acme)"
             end
 
-            launcher.binder.listeners << [str, io]
+            launcher.binder.listeners << [str, io] if io
           end
         end
       end

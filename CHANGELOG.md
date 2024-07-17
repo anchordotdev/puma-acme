@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+## 0.1.7 - 07/17/24
+
+- fix #closed? on nil error when shutting down puma
+
 ## 0.1.6 - 07/15/24
 
 - clear memoized x509 data for Cert#cert_pem=

@@ -142,7 +142,9 @@ module Puma
       end
 
       def expired?(now: Time.now.utc)
-        expires < now
+        exp = expires
+        exp = DateTime.parse(expires).to_time if expires.is_a?(String)
+        exp < now
       end
     end
   end

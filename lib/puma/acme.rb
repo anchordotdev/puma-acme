@@ -6,7 +6,6 @@ require 'pstore'
 require 'puma'
 require 'puma/binder'
 require 'puma/plugin'
-require 'sinatra'
 
 module Puma
   # This is a plugin for Puma that will automatically provision a SSL

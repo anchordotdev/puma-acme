@@ -1,5 +1,11 @@
 ## [Unreleased]
 
+## 0.1.8 - 07/29/24
+
+- remove sinatra to simplify and fix some unintended parsing bugs
+- drop jruby from CI matrix
+- add base64 dependency for future compatibility
+
 ## 0.1.7 - 07/17/24
 
 - fix #closed? on nil error when shutting down puma

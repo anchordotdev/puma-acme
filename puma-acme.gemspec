@@ -22,10 +22,8 @@ Gem::Specification.new do |s|
   s.extra_rdoc_files = ['LICENSE.txt', 'README.md', 'CHANGELOG.md']
 
   s.add_runtime_dependency 'acme-client', '~> 2.0.13'
-  s.add_runtime_dependency 'base64', '~> 0.2'
   s.add_runtime_dependency 'pstore', '~> 0.1'
   s.add_runtime_dependency 'puma', '~> 6.0'
-  s.add_runtime_dependency 'sinatra', '>= 3.2'
 
   s.add_development_dependency 'http.rb', '~> 0.12'
   s.add_development_dependency 'minitest', '~> 5.14'

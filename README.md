@@ -37,20 +37,26 @@ basic:
 ```ruby
 # config/puma.rb
 
-config.bind 'tcp://0.0.0.0:80'
+
+require 'puma/acme'
+
+bind 'tcp://0.0.0.0:80'
 
 plugin :acme
 
 acme_server_name 'puma-acme.example.org'
 acme_tos_agreed true
 
-config.bind 'acme://0.0.0.0:443'
+bind 'acme://0.0.0.0:443'
 ```
 
 advanced:
 
 ```ruby
 # config/puma.rb
+
+require 'puma/acme'
+# require 'rails' # if using Rails.cache for acme_cache
 
 # Account contact URL(s). For email, use the form 'mailto:user@domain.tld'.
 # Recommended for account recovery and revocation.
@@ -90,7 +96,7 @@ acme_mode :background
 
 # ActiveSupport::Cache::Store compatible cache to store account, order, and
 # certificate data. Defaults to a local filesystem based cache.
-acme_cache Rails.cache
+# acme_cache Rails.cache
 
 # Path to the cache directory for the default cache, defaults to 'tmp/acme'.
 acme_cache_dir 'tmp/acme'

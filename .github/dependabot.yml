@@ -5,7 +5,3 @@ updates:
     schedule:
       interval: "monthly"
     vendor: true
-    reviewers:
-      - "benburkert"
-      - "danbernier"
-      - "geemus"
